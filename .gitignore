@@ -1,0 +1,13 @@
+# Secrets - never commit these
+includes/config.php
+.env
+
+# User uploaded photos (keep the folder itself)
+uploads/*
+!uploads/.gitkeep
+
+# Editor / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
