@@ -1,0 +1,18 @@
+/* DormFinder custom styles (Bootstrap handles the rest) */
+
+:root {
+  --df-radius: 0.75rem;
+}
+
+.hero {
+  background: linear-gradient(180deg, var(--bs-primary-bg-subtle), var(--bs-body-bg));
+  padding: 4rem 0;
+}
+
+.card {
+  border-radius: var(--df-radius);
+}
+
+.navbar-brand i {
+  font-size: 1.25rem;
+}
