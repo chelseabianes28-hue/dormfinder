@@ -1,18 +1,143 @@
 /* DormFinder custom styles (Bootstrap handles the rest) */
 
 :root {
-  --df-radius: 0.75rem;
+  --df-radius: 1.25rem;
 }
 
-.hero {
-  background: linear-gradient(180deg, var(--bs-primary-bg-subtle), var(--bs-body-bg));
-  padding: 4rem 0;
+/* Soft, rounded, app-like look */
+.btn {
+  border-radius: 999px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.btn-primary {
+  --bs-btn-bg: #111;
+  --bs-btn-border-color: #111;
+  --bs-btn-hover-bg: #333;
+  --bs-btn-hover-border-color: #333;
+  --bs-btn-active-bg: #000;
+  --bs-btn-active-border-color: #000;
+  --bs-btn-disabled-bg: #111;
+  --bs-btn-disabled-border-color: #111;
 }
 
 .card {
+  border: 0;
   border-radius: var(--df-radius);
 }
 
+.form-control,
+.form-select {
+  border-radius: 0.75rem;
+}
+
 .navbar-brand i {
+  color: #111;
   font-size: 1.25rem;
+}
+
+/* Landing page hero */
+.hero {
+  background: linear-gradient(180deg, var(--bs-secondary-bg), var(--bs-body-bg));
+  padding: 4.5rem 0 3.5rem;
+}
+
+.search-bar {
+  max-width: 640px;
+}
+
+.search-bar .input-group {
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.08);
+}
+
+.search-bar .form-control,
+.search-bar .input-group-text,
+.search-bar .btn {
+  border-radius: 0;
+  border: 0;
+}
+
+/* Pill-shaped filter chips */
+.chip {
+  display: inline-block;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+  border: 1px solid var(--bs-border-color);
+}
+
+.chip:hover,
+.chip.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+/* How it works */
+.step-icon {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  background: var(--bs-secondary-bg);
+  font-size: 1.4rem;
+}
+
+/* Listing cards */
+.listing-card {
+  overflow: hidden;
+}
+
+.listing-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.listing-photo-placeholder {
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  background: var(--bs-secondary-bg);
+  color: var(--bs-secondary-color);
+  font-size: 2.5rem;
+}
+
+.listing-badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+}
+
+.circle-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.circle-btn:hover {
+  background: #333;
+  color: #fff;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: var(--bs-secondary-bg);
+  font-size: 0.8rem;
 }
