@@ -11,6 +11,12 @@ function nav_active(string $page): string
     global $currentPage;
     return $currentPage === $page ? ' active' : '';
 }
+
+// Local paths go through url(); full https:// links are used as they are.
+function asset_href(string $path): string
+{
+    return preg_match('#^https?://#', $path) ? $path : url($path);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,6 +26,9 @@ function nav_active(string $page): string
   <title><?= e($pageTitle) ?> | DormFinder</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <?php foreach (($pageStyles ?? []) as $style): ?>
+  <link rel="stylesheet" href="<?= e(asset_href($style)) ?>">
+  <?php endforeach; ?>
   <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -55,6 +64,9 @@ function nav_active(string $page): string
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li><a class="dropdown-item" href="<?= url('dashboard.php') ?>">Dashboard</a></li>
+                  <?php if ($user['role'] === 'owner'): ?>
+                    <li><a class="dropdown-item" href="<?= url('owner/my-listings.php') ?>">My listings</a></li>
+                  <?php endif; ?>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="<?= url('logout.php') ?>">Log out</a></li>
                 </ul>
