@@ -2,9 +2,10 @@
 includes/config.php
 .env
 
-# User uploaded photos (keep the folder itself)
+# User uploaded photos (keep the folder and its security file)
 uploads/*
 !uploads/.gitkeep
+!uploads/.htaccess
 
 # Editor / OS files
 .vscode/
