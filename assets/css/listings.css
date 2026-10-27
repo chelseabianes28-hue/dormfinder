@@ -1,0 +1,29 @@
+/* Find a dorm page */
+.filter-chip {
+  background: #f3e3f7;
+  color: #5b3a66;
+  border: 0;
+  cursor: pointer;
+}
+
+.filter-chip.active,
+.filter-chip:hover {
+  background: #111;
+  color: #fff;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bs-secondary-bg) 25%, var(--bs-tertiary-bg) 50%, var(--bs-secondary-bg) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  border-radius: var(--df-radius);
+  aspect-ratio: 4 / 3.4;
+}
+
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}
