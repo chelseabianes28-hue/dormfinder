@@ -6,13 +6,14 @@
       <nav aria-label="Footer navigation">
         <a class="link-secondary me-3" href="<?= url('index.php') ?>">Home</a>
         <a class="link-secondary me-3" href="<?= url('listings.php') ?>">Find a dorm</a>
+        <a class="link-secondary me-3" href="<?= url('contact.php') ?>">Contact</a>
         <a class="link-secondary" href="<?= url('login.php') ?>">Log in</a>
       </nav>
     </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="<?= url('assets/js/main.js') ?>"></script>
+  <script src="<?= e(asset_href('assets/js/main.js')) ?>"></script>
   <?php foreach (($pageScripts ?? []) as $script): ?>
   <script src="<?= e(asset_href($script)) ?>"></script>
   <?php endforeach; ?>
