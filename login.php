@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!$found || !password_verify($password, $found['password_hash'])) {
                     $errors[] = 'Invalid email or password.';
                 } elseif (!(int) $found['is_active']) {
-                    $errors[] = 'This account has been disabled. Please contact the administrator.';
+                    $errors[] = 'This account has been disabled. Please use the Contact link at the bottom of the page to reach the administrator.';
                 } else {
                     session_regenerate_id(true);
                     $_SESSION['user'] = [

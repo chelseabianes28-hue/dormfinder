@@ -319,8 +319,13 @@ require_once __DIR__ . '/../includes/header.php';
               </div>
             </div>
 
-            <p class="mb-2">Click the map to drop a pin on your dorm. You can drag the pin to adjust it.</p>
-            <div id="map" class="map-picker mb-2" role="application" aria-label="Map for pinning the dorm location"></div>
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <button type="button" class="btn btn-outline-secondary btn-sm" id="findOnMap">
+                <i class="bi bi-search" aria-hidden="true"></i> Find on map
+              </button>
+              <span class="small text-body-secondary" id="findMsg" aria-live="polite">The pin is placed automatically when you finish typing the address and city. You can then move it a little (within 300 m).</span>
+            </div>
+            <div id="map" class="map-picker mb-2" data-geocode-url="<?= e(url('api/geocode.php')) ?>" role="application" aria-label="Map for pinning the dorm location"></div>
             <input type="hidden" id="latitude" name="latitude" value="<?= e($data['latitude']) ?>">
             <input type="hidden" id="longitude" name="longitude" value="<?= e($data['longitude']) ?>">
             <div class="d-flex flex-wrap align-items-center gap-2">

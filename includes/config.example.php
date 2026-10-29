@@ -7,4 +7,7 @@ return [
     'db_user'    => 'root',
     'db_pass'    => '',
     'db_charset' => 'utf8mb4',
+
+    // Shown on the Contact page so users can email the administrator.
+    'admin_email' => 'admin@example.com',
 ];

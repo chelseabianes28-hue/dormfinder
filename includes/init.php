@@ -53,3 +53,15 @@ function is_logged_in(): bool
 {
     return current_user() !== null;
 }
+
+// The administrator's contact email, set in includes/config.php as 'admin_email'.
+function admin_email(): string
+{
+    $file = __DIR__ . '/config.php';
+    if (!is_file($file)) {
+        return '';
+    }
+    $config = require $file;
+    $email  = is_array($config) ? trim((string) ($config['admin_email'] ?? '')) : '';
+    return filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : '';
+}
