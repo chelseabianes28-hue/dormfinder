@@ -6,6 +6,18 @@ $user        = current_user();
 $flash       = get_flash();
 $currentPage = basename($_SERVER['PHP_SELF']);
 
+// Number of unread notifications (shown as a red badge on the envelope icon).
+$unreadCount = 0;
+if ($user && function_exists('getDB')) {
+    try {
+        $unreadStmt = getDB()->prepare('SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0');
+        $unreadStmt->execute([$user['id']]);
+        $unreadCount = (int) $unreadStmt->fetchColumn();
+    } catch (Throwable $ex) {
+        error_log('Unread count failed: ' . $ex->getMessage());
+    }
+}
+
 function nav_active(string $page): string
 {
     global $currentPage;
@@ -56,13 +68,34 @@ function asset_href(string $path): string
             </li>
           </ul>
 
-          <ul class="navbar-nav align-items-lg-center gap-lg-2">
+          <ul class="navbar-nav align-items-lg-center gap-lg-1">
             <?php if ($user): ?>
+              <?php if ($user['role'] === 'student'): ?>
+                <li class="nav-item">
+                  <a class="nav-link<?= nav_active('favorites.php') ?>" href="<?= url('favorites.php') ?>" aria-label="Favorites">
+                    <i class="bi bi-heart fs-5" aria-hidden="true"></i><span class="d-lg-none ms-2">Favorites</span>
+                  </a>
+                </li>
+              <?php endif; ?>
+              <?php if (in_array($user['role'], ['student', 'owner'], true)): ?>
+                <li class="nav-item">
+                  <a class="nav-link position-relative<?= nav_active('inquiries.php') ?>" href="<?= url('inquiries.php') ?>"
+                     aria-label="Inquiries<?= $unreadCount ? ', ' . $unreadCount . ' new' : '' ?>">
+                    <i class="bi bi-envelope fs-5" aria-hidden="true"></i><span class="d-lg-none ms-2">Inquiries</span>
+                    <?php if ($unreadCount > 0): ?>
+                      <span class="badge rounded-pill text-bg-danger ms-1 ms-lg-0 position-lg-absolute"><?= $unreadCount ?></span>
+                    <?php endif; ?>
+                  </a>
+                </li>
+              <?php endif; ?>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-person-circle" aria-hidden="true"></i> <?= e($user['name']) ?>
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                   aria-label="Account menu for <?= e($user['name']) ?>">
+                  <i class="bi bi-person-circle fs-5" aria-hidden="true"></i><span class="d-lg-none ms-2"><?= e($user['name']) ?></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
+                  <li><span class="dropdown-item-text small text-body-secondary"><?= e($user['name']) ?></span></li>
+                  <li><a class="dropdown-item" href="<?= url('profile.php') ?>">Profile</a></li>
                   <li><a class="dropdown-item" href="<?= url('dashboard.php') ?>">Dashboard</a></li>
                   <?php if ($user['role'] === 'owner'): ?>
                     <li><a class="dropdown-item" href="<?= url('owner/my-listings.php') ?>">My listings</a></li>
