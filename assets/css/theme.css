@@ -1,0 +1,69 @@
+/* Theme toggle and dark mode (Bootstrap 5.3 switches colors with data-bs-theme="dark") */
+
+.theme-toggle {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+[data-bs-theme="dark"] .btn-primary {
+  --bs-btn-color: #111;
+  --bs-btn-bg: #f1f1f1;
+  --bs-btn-border-color: #f1f1f1;
+  --bs-btn-hover-color: #111;
+  --bs-btn-hover-bg: #d6d6d6;
+  --bs-btn-hover-border-color: #d6d6d6;
+  --bs-btn-active-color: #111;
+  --bs-btn-active-bg: #c4c4c4;
+  --bs-btn-active-border-color: #c4c4c4;
+  --bs-btn-disabled-color: #111;
+  --bs-btn-disabled-bg: #f1f1f1;
+  --bs-btn-disabled-border-color: #f1f1f1;
+}
+
+[data-bs-theme="dark"] .circle-btn {
+  background: #f1f1f1;
+  color: #111;
+}
+
+[data-bs-theme="dark"] .circle-btn:hover {
+  background: #d6d6d6;
+  color: #111;
+}
+
+[data-bs-theme="dark"] .chip {
+  background: var(--bs-tertiary-bg);
+  border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .chip:hover,
+[data-bs-theme="dark"] .chip.active {
+  background: #f1f1f1;
+  color: #111;
+  border-color: #f1f1f1;
+}
+
+[data-bs-theme="dark"] .filter-chip {
+  background: #3a2a45;
+  color: #ead7f3;
+  border: 0;
+}
+
+[data-bs-theme="dark"] .filter-chip:hover,
+[data-bs-theme="dark"] .filter-chip.active {
+  background: #f1f1f1;
+  color: #111;
+}
+
+[data-bs-theme="dark"] .search-bar .input-group {
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.5);
+}
+
+/* Dark map tiles */
+[data-bs-theme="dark"] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+}
+
+[data-bs-theme="dark"] .leaflet-container {
+  background: #1b1d1f;
+}

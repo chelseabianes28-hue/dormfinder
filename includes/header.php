@@ -27,7 +27,12 @@ function nav_active(string $page): string
 // Local paths go through url(); full https:// links are used as they are.
 function asset_href(string $path): string
 {
-    return preg_match('#^https?://#', $path) ? $path : url($path);
+    if (preg_match('#^https?://#', $path)) {
+        return $path;
+    }
+    // Add the file's save time, so the browser loads the newest version after every change.
+    $file = dirname(__DIR__) . '/' . $path;
+    return url($path) . (is_file($file) ? '?v=' . filemtime($file) : '');
 }
 ?>
 <!DOCTYPE html>
@@ -36,12 +41,21 @@ function asset_href(string $path): string
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= e($pageTitle) ?> | DormFinder</title>
+  <script>
+    // Apply the saved theme right away so the page does not flash white.
+    (function () {
+      var theme = 'light';
+      try { theme = localStorage.getItem('df-theme') || 'light'; } catch (e) {}
+      document.documentElement.setAttribute('data-bs-theme', theme === 'dark' ? 'dark' : 'light');
+    })();
+  </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <?php foreach (($pageStyles ?? []) as $style): ?>
   <link rel="stylesheet" href="<?= e(asset_href($style)) ?>">
   <?php endforeach; ?>
-  <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
+  <link rel="stylesheet" href="<?= e(asset_href('assets/css/style.css')) ?>">
+  <link rel="stylesheet" href="<?= e(asset_href('assets/css/theme.css')) ?>">
 </head>
 <body class="d-flex flex-column min-vh-100">
   <a class="visually-hidden-focusable" href="#main">Skip to main content</a>
@@ -69,6 +83,11 @@ function asset_href(string $path): string
           </ul>
 
           <ul class="navbar-nav align-items-lg-center gap-lg-1">
+            <li class="nav-item">
+              <button type="button" class="nav-link theme-toggle" id="themeToggle" aria-pressed="false" aria-label="Switch to dark mode">
+                <i class="bi bi-moon-stars fs-5" aria-hidden="true"></i><span class="d-lg-none ms-2">Dark mode</span>
+              </button>
+            </li>
             <?php if ($user): ?>
               <?php if ($user['role'] === 'student'): ?>
                 <li class="nav-item">
