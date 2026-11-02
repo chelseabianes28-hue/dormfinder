@@ -8,7 +8,7 @@ $listing = null;
 if ($id > 0) {
     try {
         $stmt = getDB()->prepare(
-            'SELECT l.*, u.full_name AS owner_name, u.phone AS owner_phone
+            'SELECT l.*, u.full_name AS owner_name, u.phone AS owner_phone, u.email AS owner_email, u.avatar AS owner_avatar
                FROM listings l JOIN users u ON u.id = l.owner_id WHERE l.id = ?'
         );
         $stmt->execute([$id]);
@@ -85,19 +85,31 @@ require_once __DIR__ . '/includes/header.php';
       <p class="mb-1"><span class="display-6 fw-semibold">&#8369;<?= number_format((float) $listing['price_per_month'], 2) ?></span>
         <span class="text-body-secondary">/ month</span></p>
 
-      <p class="mb-4">
-        <strong>Owner contact:</strong>
+      <div class="mb-4">
+        <strong>Contact the owner:</strong>
         <?php if ($user): ?>
-          <?php if ($listing['owner_phone']): ?>
-            <a href="tel:<?= e(preg_replace('/[^0-9+]/', '', $listing['owner_phone'])) ?>"><?= e($listing['owner_phone']) ?></a>
-            (<?= e($listing['owner_name']) ?>)
-          <?php else: ?>
-            <span class="text-body-secondary">not provided</span>
-          <?php endif; ?>
+          <ul class="list-unstyled mb-0 mt-1">
+            <li class="d-flex align-items-center gap-2">
+              <?php if (!empty($listing['owner_avatar'])): ?>
+                <img src="<?= e(url($listing['owner_avatar'])) ?>" alt="" class="rounded-circle" width="28" height="28" style="object-fit: cover;">
+              <?php else: ?>
+                <i class="bi bi-person" aria-hidden="true"></i>
+              <?php endif; ?>
+              <a href="<?= url('owner-profile.php?id=' . (int) $listing['owner_id']) ?>" title="View the owner's profile"><?= e($listing['owner_name']) ?></a>
+              <i class="bi bi-chevron-right small text-body-secondary" aria-hidden="true"></i>
+            </li>
+            <li><i class="bi bi-telephone" aria-hidden="true"></i>
+              <?php if ($listing['owner_phone']): ?>
+                <a href="tel:<?= e(preg_replace('/[^0-9+]/', '', $listing['owner_phone'])) ?>"><?= e($listing['owner_phone']) ?></a>
+              <?php else: ?><span class="text-body-secondary">not provided</span><?php endif; ?>
+            </li>
+            <li><i class="bi bi-envelope" aria-hidden="true"></i>
+              <a href="mailto:<?= e($listing['owner_email']) ?>"><?= e($listing['owner_email']) ?></a></li>
+          </ul>
         <?php else: ?>
-          <a href="<?= url('login.php') ?>">Log in</a> to see the contact number.
+          <a href="<?= url('login.php') ?>">Log in</a> to see the owner's phone number and email.
         <?php endif; ?>
-      </p>
+      </div>
 
       <?php if ($isStudent): ?>
         <button type="button" class="btn btn-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#inquiryModal">Inquire</button>
