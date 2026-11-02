@@ -5,7 +5,7 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const DEFAULT_CENTER = [14.5995, 120.9842];
 
 // Feature 1: the pin is placed from the typed address; the owner can only move it a little.
-const MAX_MOVE_METERS = 300;
+const DEFAULT_MOVE_METERS = 300;
 
 const setupMapPicker = () => {
   const mapEl = document.querySelector('#map');
@@ -32,19 +32,21 @@ const setupMapPicker = () => {
 
   let marker = null;
   let lastPos = null;
-  let anchor = null;        // the spot found from the address; the pin must stay close to it
+  let anchor = null;                 // the spot found from the address
+  let moveLimit = DEFAULT_MOVE_METERS;
   let limitCircle = null;
-  let userMoved = false;    // true once the owner moved the pin by hand
+  let userMoved = false;             // true once the owner moved the pin by hand
   let busy = false;
 
-  const setAnchor = (lat, lng) => {
+  const setAnchor = (lat, lng, radius = DEFAULT_MOVE_METERS) => {
     anchor = L.latLng(lat, lng);
+    moveLimit = radius;
     if (limitCircle) {
-      limitCircle.setLatLng(anchor);
+      limitCircle.setLatLng(anchor).setRadius(radius);
       return;
     }
     limitCircle = L.circle(anchor, {
-      radius: MAX_MOVE_METERS, color: '#5b3a66', weight: 1.5, dashArray: '6 6', fillOpacity: 0.06, interactive: false,
+      radius, color: '#2D6AF0', weight: 1.5, dashArray: '6 6', fillOpacity: 0.06, interactive: false,
     }).addTo(map);
   };
 
@@ -52,6 +54,8 @@ const setupMapPicker = () => {
     anchor = null;
     if (limitCircle) { limitCircle.remove(); limitCircle = null; }
   };
+
+  const limitText = () => (moveLimit >= 1000 ? `${moveLimit / 1000} km` : `${moveLimit} m`);
 
   const setPin = (lat, lng) => {
     latInput.value = lat.toFixed(7);
@@ -70,10 +74,10 @@ const setupMapPicker = () => {
     });
   };
 
-  // A manual move is only allowed within MAX_MOVE_METERS of the address spot.
+  // A manual move is only allowed close to the spot found from the address.
   const tryMove = (lat, lng) => {
-    if (anchor && anchor.distanceTo([lat, lng]) > MAX_MOVE_METERS) {
-      findMsg.textContent = `Keep the pin within ${MAX_MOVE_METERS} m of your address. To place it somewhere else, fix the address and click "Find on map".`;
+    if (anchor && anchor.distanceTo([lat, lng]) > moveLimit) {
+      findMsg.textContent = `Keep the pin within ${limitText()} of your address. To place it somewhere else, fix the address and click "Find on map".`;
       return false;
     }
     userMoved = true;
@@ -101,23 +105,25 @@ const setupMapPicker = () => {
 
     busy = true;
     findBtn.disabled = true;
-    findMsg.textContent = 'Looking for your address...';
+    findMsg.textContent = 'Looking for your address... this can take a few seconds.';
     try {
       const response = await fetch(`${mapEl.dataset.geocodeUrl}?${new URLSearchParams({ address, city })}`, { headers: { Accept: 'application/json' } });
       const data = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.error || 'Request failed.');
 
-      if (data.precision === 'address') {
-        userMoved = false;
-        setPin(data.lat, data.lng);
-        setAnchor(data.lat, data.lng);
-        map.setView([data.lat, data.lng], 17);
-        findMsg.textContent = `Pin placed near: ${data.display_name}. You can move it up to ${MAX_MOVE_METERS} m.`;
-      } else {
+      if (data.precision === 'city') {
         clearAnchor();
         map.setView([data.lat, data.lng], 14);
-        findMsg.textContent = 'We found the city but not the exact street. Click the map to place the pin on your dorm.';
+        findMsg.textContent = 'We found the city but not the street. Click the map to place the pin on your dorm.';
+        return;
       }
+      userMoved = false;
+      setPin(data.lat, data.lng);
+      setAnchor(data.lat, data.lng, data.radius);
+      map.setView([data.lat, data.lng], data.precision === 'address' ? 17 : 15);
+      findMsg.textContent = data.precision === 'address'
+        ? `Pin placed near: ${data.display_name}. You can move it up to ${limitText()}.`
+        : `We found the area (${data.display_name}) but not the exact building. Move the pin to your dorm, within ${limitText()}.`;
     } catch (error) {
       findMsg.textContent = error.message || 'Unable to connect to the server. Click the map to place the pin.';
     } finally {

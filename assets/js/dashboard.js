@@ -11,10 +11,13 @@ let colors = palette();
 const instances = [];
 
 const STATUS_COLORS = { Approved: '#2f9e6b', Pending: '#f2b84b', Rejected: '#e5636b' };
-const OTHER_COLORS = { Owners: '#8b6bd9', Admins: '#c9c9c9' };
-const FALLBACK = ['#8b6bd9', '#c9a7e6', '#9ca3af', '#f2b84b', '#2f9e6b'];
+const accent = () => (isDark() ? '#5B8CFF' : '#2D6AF0');
+const navy = () => (isDark() ? '#8E9BE0' : '#2C3A72');
+const sand = () => (isDark() ? '#6B645C' : '#D8CFC4');
 const colorFor = (label, index) =>
-  STATUS_COLORS[label] ?? OTHER_COLORS[label] ?? (label === 'Students' || index === 0 ? colors.ink : FALLBACK[index % FALLBACK.length]);
+  STATUS_COLORS[label]
+  ?? { Students: accent(), Owners: navy(), Admins: sand() }[label]
+  ?? [accent(), navy(), sand(), '#f2b84b', '#2f9e6b'][index % 5];
 
 Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
 Chart.defaults.font.size = 12;
@@ -77,7 +80,7 @@ const drawChart = (canvasId, type, items, title) => {
       labels: items.map((item) => item.label),
       datasets: [{
         data: items.map((item) => item.value),
-        backgroundColor: items.map((item, index) => (isDoughnut ? colorFor(item.label, index) : colors.ink)),
+        backgroundColor: items.map((item, index) => (isDoughnut ? colorFor(item.label, index) : accent())),
         borderWidth: 0,
         borderRadius: isDoughnut ? 10 : 8,
         borderSkipped: false,
