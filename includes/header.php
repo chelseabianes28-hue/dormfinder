@@ -18,6 +18,18 @@ if ($user && function_exists('getDB')) {
     }
 }
 
+// The user's profile photo (shown in the navbar). Stays empty if there is none.
+$avatarPath = null;
+if ($user && function_exists('getDB')) {
+    try {
+        $avatarStmt = getDB()->prepare('SELECT avatar FROM users WHERE id = ?');
+        $avatarStmt->execute([$user['id']]);
+        $avatarPath = $avatarStmt->fetchColumn() ?: null;
+    } catch (Throwable $ex) {
+        error_log('Avatar lookup failed: ' . $ex->getMessage());
+    }
+}
+
 function nav_active(string $page): string
 {
     global $currentPage;
@@ -110,7 +122,7 @@ function asset_href(string $path): string
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
                    aria-label="Account menu for <?= e($user['name']) ?>">
-                  <i class="bi bi-person-circle fs-5" aria-hidden="true"></i><span class="d-lg-none ms-2"><?= e($user['name']) ?></span>
+                  <?php if ($avatarPath): ?><img src="<?= e(url($avatarPath)) ?>" alt="" class="rounded-circle" width="28" height="28" style="object-fit: cover;"><?php else: ?><i class="bi bi-person-circle fs-5" aria-hidden="true"></i><?php endif; ?><span class="d-lg-none ms-2"><?= e($user['name']) ?></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li><span class="dropdown-item-text small text-body-secondary"><?= e($user['name']) ?></span></li>
