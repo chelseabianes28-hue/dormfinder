@@ -1,10 +1,45 @@
 /* DormFinder custom styles (Bootstrap handles the rest) */
 
-:root {
+/* ---------- Color palette (light theme). Dark values are in theme.css ---------- */
+:root,
+[data-bs-theme="light"] {
   --df-radius: 1.25rem;
+
+  --df-ink: #111214;
+  --df-primary: #2D6AF0;
+  --df-primary-hover: #1F57D6;
+  --df-primary-soft: #E8F0FE;
+  --df-primary-soft-text: #1C3F94;
+  --df-navy: #2C3A72;
+  --df-outline: #CFC9C2;
+
+  --df-peach: #F6E7DD;
+  --df-sky: #E3EAF6;
+  --df-cream: #F7EFD9;
+
+  --bs-body-bg: #FFFFFF;
+  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-body-color: #111214;
+  --bs-body-color-rgb: 17, 18, 20;
+  --bs-secondary-color: #62666D;
+  --bs-secondary-bg: #F3F0EC;
+  --bs-secondary-bg-rgb: 243, 240, 236;
+  --bs-tertiary-bg: #F8F6F3;
+  --bs-tertiary-bg-rgb: 248, 246, 243;
+  --bs-border-color: #E6E1DB;
+
+  --bs-primary: #2D6AF0;
+  --bs-primary-rgb: 45, 106, 240;
+  --bs-primary-bg-subtle: #E8F0FE;
+  --bs-primary-border-subtle: #BFD1FB;
+  --bs-primary-text-emphasis: #1C3F94;
+  --bs-link-color: #1F57D6;
+  --bs-link-color-rgb: 31, 87, 214;
+  --bs-link-hover-color: #1745AB;
+  --bs-link-hover-color-rgb: 23, 69, 171;
 }
 
-/* Soft, rounded, app-like look */
+/* ---------- Buttons, forms, cards ---------- */
 .btn {
   border-radius: 999px;
   padding-left: 1.25rem;
@@ -12,19 +47,32 @@
 }
 
 .btn-primary {
-  --bs-btn-bg: #111;
-  --bs-btn-border-color: #111;
-  --bs-btn-hover-bg: #333;
-  --bs-btn-hover-border-color: #333;
-  --bs-btn-active-bg: #000;
-  --bs-btn-active-border-color: #000;
-  --bs-btn-disabled-bg: #111;
-  --bs-btn-disabled-border-color: #111;
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--df-primary);
+  --bs-btn-border-color: var(--df-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--df-primary-hover);
+  --bs-btn-hover-border-color: var(--df-primary-hover);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #1A49B8;
+  --bs-btn-active-border-color: #1A49B8;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: var(--df-primary);
+  --bs-btn-disabled-border-color: var(--df-primary);
+  --bs-btn-focus-shadow-rgb: 45, 106, 240;
 }
 
-.card {
-  border: 0;
-  border-radius: var(--df-radius);
+.btn-outline-secondary {
+  --bs-btn-color: var(--bs-body-color);
+  --bs-btn-border-color: var(--df-outline);
+  --bs-btn-hover-color: var(--bs-body-color);
+  --bs-btn-hover-bg: var(--bs-secondary-bg);
+  --bs-btn-hover-border-color: var(--df-outline);
+  --bs-btn-active-color: var(--bs-body-color);
+  --bs-btn-active-bg: var(--bs-secondary-bg);
+  --bs-btn-active-border-color: var(--df-outline);
+  --bs-btn-disabled-color: var(--bs-secondary-color);
+  --bs-btn-disabled-border-color: var(--df-outline);
 }
 
 .form-control,
@@ -32,12 +80,28 @@
   border-radius: 0.75rem;
 }
 
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: var(--df-primary);
+  box-shadow: 0 0 0 0.2rem rgba(45, 106, 240, 0.2);
+}
+
+.form-check-input:checked {
+  background-color: var(--df-primary);
+  border-color: var(--df-primary);
+}
+
+.card {
+  border: 0;
+  border-radius: var(--df-radius);
+}
+
 .navbar-brand i {
-  color: #111;
   font-size: 1.25rem;
 }
 
-/* Landing page hero */
+/* ---------- Landing page ---------- */
 .hero {
   background: linear-gradient(180deg, var(--bs-secondary-bg), var(--bs-body-bg));
   padding: 4.5rem 0 3.5rem;
@@ -50,7 +114,7 @@
 .search-bar .input-group {
   border-radius: 999px;
   overflow: hidden;
-  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0.25rem 1rem rgba(17, 18, 20, 0.08);
 }
 
 .search-bar .form-control,
@@ -60,7 +124,6 @@
   border: 0;
 }
 
-/* Pill-shaped filter chips */
 .chip {
   display: inline-block;
   padding: 0.35rem 0.9rem;
@@ -74,12 +137,11 @@
 
 .chip:hover,
 .chip.active {
-  background: #111;
+  background: var(--df-primary);
   color: #fff;
-  border-color: #111;
+  border-color: var(--df-primary);
 }
 
-/* How it works */
 .step-icon {
   width: 3.25rem;
   height: 3.25rem;
@@ -90,7 +152,11 @@
   font-size: 1.4rem;
 }
 
-/* Listing cards */
+.row > .col-md-4:nth-child(1) .step-icon { background: var(--df-peach); }
+.row > .col-md-4:nth-child(2) .step-icon { background: var(--df-sky); }
+.row > .col-md-4:nth-child(3) .step-icon { background: var(--df-cream); }
+
+/* ---------- Listing cards ---------- */
 .listing-card {
   overflow: hidden;
 }
@@ -123,14 +189,14 @@
   border-radius: 50%;
   display: inline-grid;
   place-items: center;
-  background: #111;
-  color: #fff;
+  background: var(--df-ink);
+  color: var(--bs-body-bg);
   text-decoration: none;
   flex-shrink: 0;
 }
 
 .circle-btn:hover {
-  background: #333;
+  background: var(--df-primary);
   color: #fff;
 }
 
@@ -142,7 +208,7 @@
   font-size: 0.8rem;
 }
 
-/* Add listing / Edit listing form */
+/* ---------- Add listing / Edit listing form ---------- */
 .map-picker {
   height: 320px;
   border-radius: 0.75rem;

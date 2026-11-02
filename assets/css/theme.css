@@ -6,53 +6,38 @@
   cursor: pointer;
 }
 
-[data-bs-theme="dark"] .btn-primary {
-  --bs-btn-color: #111;
-  --bs-btn-bg: #f1f1f1;
-  --bs-btn-border-color: #f1f1f1;
-  --bs-btn-hover-color: #111;
-  --bs-btn-hover-bg: #d6d6d6;
-  --bs-btn-hover-border-color: #d6d6d6;
-  --bs-btn-active-color: #111;
-  --bs-btn-active-bg: #c4c4c4;
-  --bs-btn-active-border-color: #c4c4c4;
-  --bs-btn-disabled-color: #111;
-  --bs-btn-disabled-bg: #f1f1f1;
-  --bs-btn-disabled-border-color: #f1f1f1;
-}
+[data-bs-theme="dark"] {
+  --df-ink: #ECEDEF;
+  --df-primary-hover: #4A80F5;
+  --df-primary-soft: #1B2A4D;
+  --df-primary-soft-text: #BFD1FF;
+  --df-navy: #8E9BE0;
+  --df-outline: #3A3E45;
 
-[data-bs-theme="dark"] .circle-btn {
-  background: #f1f1f1;
-  color: #111;
-}
+  --df-peach: #3A2D27;
+  --df-sky: #252C3B;
+  --df-cream: #38321F;
 
-[data-bs-theme="dark"] .circle-btn:hover {
-  background: #d6d6d6;
-  color: #111;
-}
+  --bs-body-bg: #101113;
+  --bs-body-bg-rgb: 16, 17, 19;
+  --bs-body-color: #ECEDEF;
+  --bs-body-color-rgb: 236, 237, 239;
+  --bs-secondary-color: #A3A8B0;
+  --bs-secondary-bg: #1B1D21;
+  --bs-secondary-bg-rgb: 27, 29, 33;
+  --bs-tertiary-bg: #15171A;
+  --bs-tertiary-bg-rgb: 21, 23, 26;
+  --bs-border-color: #2C2F35;
 
-[data-bs-theme="dark"] .chip {
-  background: var(--bs-tertiary-bg);
-  border-color: var(--bs-border-color);
-}
-
-[data-bs-theme="dark"] .chip:hover,
-[data-bs-theme="dark"] .chip.active {
-  background: #f1f1f1;
-  color: #111;
-  border-color: #f1f1f1;
-}
-
-[data-bs-theme="dark"] .filter-chip {
-  background: #3a2a45;
-  color: #ead7f3;
-  border: 0;
-}
-
-[data-bs-theme="dark"] .filter-chip:hover,
-[data-bs-theme="dark"] .filter-chip.active {
-  background: #f1f1f1;
-  color: #111;
+  --bs-primary: #5B8CFF;
+  --bs-primary-rgb: 91, 140, 255;
+  --bs-primary-bg-subtle: #1B2A4D;
+  --bs-primary-border-subtle: #2B4585;
+  --bs-primary-text-emphasis: #BFD1FF;
+  --bs-link-color: #7FA3FF;
+  --bs-link-color-rgb: 127, 163, 255;
+  --bs-link-hover-color: #A5C0FF;
+  --bs-link-hover-color-rgb: 165, 192, 255;
 }
 
 [data-bs-theme="dark"] .search-bar .input-group {

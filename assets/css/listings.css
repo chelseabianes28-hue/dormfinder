@@ -1,14 +1,14 @@
 /* Find a dorm page */
 .filter-chip {
-  background: #f3e3f7;
-  color: #5b3a66;
+  background: var(--df-primary-soft);
+  color: var(--df-primary-soft-text);
   border: 0;
   cursor: pointer;
 }
 
 .filter-chip.active,
 .filter-chip:hover {
-  background: #111;
+  background: var(--df-primary);
   color: #fff;
 }
 
