@@ -59,8 +59,6 @@ CREATE TABLE IF NOT EXISTS inquiries (
   student_id   INT UNSIGNED NOT NULL,
   message      TEXT NOT NULL,
   move_in_date DATE NULL,
-  visit_date   DATE NULL,
-  visit_time   TIME NULL,
   status       ENUM('pending','accepted','declined') NOT NULL DEFAULT 'pending',
   created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_inquiries_listing FOREIGN KEY (listing_id) REFERENCES listings(id) ON DELETE CASCADE,
