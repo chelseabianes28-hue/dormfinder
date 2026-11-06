@@ -50,6 +50,7 @@ $hasCharts  = in_array($role, ['admin', 'owner'], true);
 $pageTitle  = 'Dashboard';
 if ($hasCharts) {
     $pageScripts = ['https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.js', 'assets/js/dashboard.js'];
+    $pageStyles  = ['assets/css/dashboard.css'];
 }
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -86,13 +87,13 @@ require_once __DIR__ . '/includes/header.php';
       <a class="btn btn-outline-secondary" href="<?= url('inquiries.php') ?>">Inquiries</a>
     </div>
     <div class="row g-3" id="dashboardCharts" data-endpoint="<?= e(url('api/stats.php')) ?>">
-      <div class="col-lg-5"><div class="card shadow-sm h-100"><div class="card-body">
+      <div class="col-lg-5"><div class="card chart-card shadow-sm h-100"><div class="card-body">
         <h2 class="h6">My listings by status</h2>
-        <canvas id="chartStatus" role="img" aria-label="Chart of my listings by status" height="220"></canvas>
+        <div class="chart-box"><canvas id="chartStatus" role="img" aria-label="Chart of my listings by status"></canvas></div>
       </div></div></div>
-      <div class="col-lg-7"><div class="card shadow-sm h-100"><div class="card-body">
+      <div class="col-lg-7"><div class="card chart-card shadow-sm h-100"><div class="card-body">
         <h2 class="h6">Inquiries per listing</h2>
-        <canvas id="chartInquiries" role="img" aria-label="Chart of inquiries per listing" height="220"></canvas>
+        <div class="chart-box"><canvas id="chartInquiries" role="img" aria-label="Chart of inquiries per listing"></canvas></div>
       </div></div></div>
     </div>
 
@@ -108,17 +109,17 @@ require_once __DIR__ . '/includes/header.php';
       <a class="btn btn-outline-secondary" href="<?= url('admin/users.php') ?>">Manage users</a>
     </div>
     <div class="row g-3" id="dashboardCharts" data-endpoint="<?= e(url('api/stats.php')) ?>">
-      <div class="col-md-6 col-lg-4"><div class="card shadow-sm h-100"><div class="card-body">
+      <div class="col-md-6 col-lg-4"><div class="card chart-card shadow-sm h-100"><div class="card-body">
         <h2 class="h6">Listings by status</h2>
-        <canvas id="chartStatus" role="img" aria-label="Chart of listings by status" height="220"></canvas>
+        <div class="chart-box"><canvas id="chartStatus" role="img" aria-label="Chart of listings by status"></canvas></div>
       </div></div></div>
-      <div class="col-md-6 col-lg-4"><div class="card shadow-sm h-100"><div class="card-body">
+      <div class="col-md-6 col-lg-4"><div class="card chart-card shadow-sm h-100"><div class="card-body">
         <h2 class="h6">Users by role</h2>
-        <canvas id="chartRoles" role="img" aria-label="Chart of users by role" height="220"></canvas>
+        <div class="chart-box"><canvas id="chartRoles" role="img" aria-label="Chart of users by role"></canvas></div>
       </div></div></div>
-      <div class="col-lg-4"><div class="card shadow-sm h-100"><div class="card-body">
+      <div class="col-lg-4"><div class="card chart-card shadow-sm h-100"><div class="card-body">
         <h2 class="h6">Top cities (approved listings)</h2>
-        <canvas id="chartCities" role="img" aria-label="Chart of approved listings by city" height="220"></canvas>
+        <div class="chart-box"><canvas id="chartCities" role="img" aria-label="Chart of approved listings by city"></canvas></div>
       </div></div></div>
     </div>
   <?php endif; ?>

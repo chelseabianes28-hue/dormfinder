@@ -1,0 +1,12 @@
+/* Dashboard charts */
+.chart-box {
+  position: relative;
+  height: 260px;
+}
+
+.chart-card h2 {
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bs-secondary-color);
+}
