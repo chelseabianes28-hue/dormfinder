@@ -53,6 +53,12 @@ function asset_href(string $path): string
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= e($pageTitle) ?> | StayC — Student Accommodation Finder</title>
+  
+  <!-- Google Fonts: Outfit (Logo/Brand) & Plus Jakarta Sans (Headings & Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <script>
     // Apply the saved theme right away so the page does not flash white.
     (function () {
@@ -75,7 +81,7 @@ function asset_href(string $path): string
   <header>
     <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom" aria-label="Main navigation">
       <div class="container">
-        <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="<?= url('index.php') ?>">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="<?= url('index.php') ?>">
           <i class="bi bi-house-heart-fill text-primary" aria-hidden="true"></i> <span>StayC</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -158,3 +164,4 @@ function asset_href(string $path): string
         </div>
       </div>
     <?php endif; ?>
+    
