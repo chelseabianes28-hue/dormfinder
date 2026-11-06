@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/init.php';
 
-$pageTitle   = $pageTitle ?? 'DormFinder';
+$pageTitle   = $pageTitle ?? 'StayC';
 $user        = current_user();
 $flash       = get_flash();
 $currentPage = basename($_SERVER['PHP_SELF']);
@@ -52,7 +52,7 @@ function asset_href(string $path): string
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= e($pageTitle) ?> | DormFinder</title>
+  <title><?= e($pageTitle) ?> | StayC — Student Accommodation Finder</title>
   <script>
     // Apply the saved theme right away so the page does not flash white.
     (function () {
@@ -75,8 +75,8 @@ function asset_href(string $path): string
   <header>
     <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom" aria-label="Main navigation">
       <div class="container">
-        <a class="navbar-brand fw-semibold" href="<?= url('index.php') ?>">
-          <i class="bi bi-house-heart-fill text-primary" aria-hidden="true"></i> DormFinder
+        <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="<?= url('index.php') ?>">
+          <i class="bi bi-house-heart-fill text-primary" aria-hidden="true"></i> <span>StayC</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false"

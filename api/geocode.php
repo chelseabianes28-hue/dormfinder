@@ -111,14 +111,44 @@ if (($_SESSION['geo_last'] ?? 0) > microtime(true) - 2) {
 }
 $_SESSION['geo_last'] = microtime(true);
 
-try {
-    $match = lookup($address . ', ' . $city);
-    if ($match) {
-        out(['ok' => true, 'precision' => 'address', 'lat' => $match['lat'], 'lng' => $match['lng'], 'display_name' => $match['name']]);
+// Long Philippine addresses ("Stall 1-C ... cor Real St") often fail, so try simpler versions too.
+function candidates(string $address, string $city): array
+{
+    $list   = [[$address . ', ' . $city, 'address', 300]];
+    $noUnit = preg_replace('/^\s*(stall|unit|room|rm|suite|ste|bldg|building|floor|flr|blk|block|lot|phase|ph)\.?\s*[\w\-\/]+\s*,?\s+/i', '', $address);
+    if ($noUnit !== null && $noUnit !== '' && $noUnit !== $address) {
+        $list[] = [$noUnit . ', ' . $city, 'address', 300];
     }
-    $cityMatch = lookup($city);          // fall back to the city so the map at least moves there
+    $parts = array_values(array_filter(array_map('trim', explode(',', $address))));
+    foreach ([array_slice($parts, 1), array_slice($parts, -1)] as $rest) {
+        if ($rest) {
+            $text   = preg_replace('/^\s*(cor\.?|corner)\s+/i', '', implode(', ', $rest));
+            $list[] = [$text . ', ' . $city, 'area', 1000];
+        }
+    }
+    $seen = [];
+    return array_values(array_filter($list, static function ($c) use (&$seen) {
+        $key = mb_strtolower($c[0]);
+        if (isset($seen[$key])) {
+            return false;
+        }
+        $seen[$key] = true;
+        return true;
+    }));
+}
+
+try {
+    foreach (array_slice(candidates($address, $city), 0, 4) as [$query, $precision, $radius]) {
+        $match = lookup($query);
+        if ($match) {
+            out(['ok' => true, 'precision' => $precision, 'radius' => $radius, 'lat' => $match['lat'], 'lng' => $match['lng'],
+                 'display_name' => $match['name']]);
+        }
+    }
+    $cityMatch = lookup($city);          // last resort: move the map to the city
     if ($cityMatch) {
-        out(['ok' => true, 'precision' => 'city', 'lat' => $cityMatch['lat'], 'lng' => $cityMatch['lng'], 'display_name' => $cityMatch['name']]);
+        out(['ok' => true, 'precision' => 'city', 'radius' => 0, 'lat' => $cityMatch['lat'], 'lng' => $cityMatch['lng'],
+             'display_name' => $cityMatch['name']]);
     }
     out(['ok' => false, 'error' => 'We could not find that address. Please click the map to place the pin.'], 404);
 } catch (Throwable $ex) {
