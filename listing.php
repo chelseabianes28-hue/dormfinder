@@ -18,7 +18,6 @@ if ($id > 0) {
     }
 }
 
-// Visitors only see approved listings. The owner and admin can also preview unapproved ones.
 $canView = $listing && ($listing['status'] === 'approved'
     || ($user && ($user['role'] === 'admin' || (int) $user['id'] === (int) $listing['owner_id'])));
 
@@ -50,20 +49,6 @@ $genderLabels = ['any' => 'All genders', 'male_only' => 'Male only', 'female_onl
 $rules     = array_values(array_filter(array_map('trim', preg_split('/\R/', (string) $listing['rules']))));
 $amenities = array_values(array_filter(array_map('trim', explode(',', (string) $listing['amenities']))));
 $slots     = (int) $listing['slots_available'];
-
-function get_amenity_icon(string $amenity): string
-{
-    $a = strtolower($amenity);
-    if (str_contains($a, 'wifi') || str_contains($a, 'internet')) return 'bi-wifi';
-    if (str_contains($a, 'air') || str_contains($a, 'ac')) return 'bi-snow';
-    if (str_contains($a, 'kitchen') || str_contains($a, 'cook')) return 'bi-cup-hot';
-    if (str_contains($a, 'security') || str_contains($a, 'cctv')) return 'bi-shield-check';
-    if (str_contains($a, 'laundry') || str_contains($a, 'wash')) return 'bi-droplet';
-    if (str_contains($a, 'generator') || str_contains($a, 'power')) return 'bi-lightning-charge';
-    if (str_contains($a, 'bed') || str_contains($a, 'mattress')) return 'bi-door-open';
-    if (str_contains($a, 'water') || str_contains($a, 'heater')) return 'bi-water';
-    return 'bi-check-circle';
-}
 
 $pageTitle   = $listing['title'];
 $pageStyles  = ['https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css', 'assets/css/listing.css'];
@@ -153,8 +138,40 @@ require_once __DIR__ . '/includes/header.php';
       <?php if ($amenities): ?>
         <div class="amenities-grid">
           <?php foreach ($amenities as $item): ?>
+            <?php
+              $a = strtolower(trim($item));
+
+              // 1. Laundry / Wash / Space / Dryer
+              if (str_contains($a, 'laundry') || str_contains($a, 'wash') || str_contains($a, 'space') || str_contains($a, 'dryer')) {
+                  $icon = 'bi-droplet-half';
+              }
+              // 2. Wi-Fi / Internet
+              elseif (str_contains($a, 'wifi') || str_contains($a, 'wi-fi') || str_contains($a, 'internet')) {
+                  $icon = 'bi-wifi';
+              }
+              // 3. Aircon / AC (use exact word boundary \bac\b so "space" doesn't trigger it)
+              elseif (str_contains($a, 'aircon') || str_contains($a, 'air') || preg_match('/\bac\b/i', $a)) {
+                  $icon = 'bi-snow';
+              }
+              // 4. Parking / Garage / Lot / Vehicle / Car
+              elseif (str_contains($a, 'park') || str_contains($a, 'garage') || str_contains($a, 'car') || str_contains($a, 'lot') || str_contains($a, 'vehicle')) {
+                  $icon = 'bi-car-front';
+              }
+              // 5. Kitchen / Cooking
+              elseif (str_contains($a, 'kitchen') || str_contains($a, 'cook')) {
+                  $icon = 'bi-cup-hot';
+              }
+              // 6. Security / CCTV
+              elseif (str_contains($a, 'security') || str_contains($a, 'cctv')) {
+                  $icon = 'bi-shield-check';
+              }
+              // 7. Default checkmark icon for any new amenity
+              else {
+                  $icon = 'bi-check-circle';
+              }
+            ?>
             <div class="amenity-card">
-              <i class="bi <?= get_amenity_icon($item) ?>"></i>
+              <i class="bi <?= $icon ?>"></i>
               <span><?= e($item) ?></span>
             </div>
           <?php endforeach; ?>

@@ -9,7 +9,12 @@ $id      = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
 $editing = $id > 0;
 $photos  = [];
 
-$types   = ['dormitory' => 'Dormitory', 'bedspace' => 'Bedspace', 'boarding_house' => 'Boarding house'];
+$types   = [
+    'dormitory'      => 'Dormitory',
+    'bedspace'       => 'Bedspace',
+    'boarding_house' => 'Boarding house',
+    'apartment'      => 'Apartment',
+];
 $genders = ['any' => 'All genders', 'male_only' => 'Male only', 'female_only' => 'Female only'];
 
 $data = [
@@ -129,7 +134,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ];
 
                 if ($editing) {
-                    // A rejected listing goes back to "pending" when the owner fixes and resubmits it.
                     $save = $pdo->prepare(
                         "UPDATE listings SET title = ?, description = ?, type = ?, price_per_month = ?,
                                 slots_total = ?, slots_available = ?, gender_policy = ?, address = ?, city = ?,
