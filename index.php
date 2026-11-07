@@ -27,14 +27,14 @@ require_once __DIR__ . '/includes/header.php';
   <div class="container">
     <h1 class="display-5 fw-semibold">Find your space. Stay close.</h1>
     <p class="lead text-body-secondary mb-4">
-      Find a dorm or bedspace near your campus. Search, compare, and contact owners in one place with StayC.
+      Find a dorm, bedspace, or apartment near your campus. Search, compare, and contact owners in one place with StayC.
     </p>
 
     <form class="search-bar mx-auto" action="<?= url('listings.php') ?>" method="get" role="search">
       <div class="input-group input-group-lg">
         <span class="input-group-text bg-body"><i class="bi bi-search" aria-hidden="true"></i></span>
         <input type="search" class="form-control" name="q"
-               placeholder="Search by campus, area, or dorm name" aria-label="Search listings">
+               placeholder="Search by campus, area, or listing name" aria-label="Search listings">
         <button class="btn btn-primary" type="submit">Search</button>
       </div>
     </form>
@@ -43,6 +43,7 @@ require_once __DIR__ . '/includes/header.php';
       <a class="chip" href="<?= url('listings.php?type=dormitory') ?>">Dormitory</a>
       <a class="chip" href="<?= url('listings.php?type=bedspace') ?>">Bedspace</a>
       <a class="chip" href="<?= url('listings.php?type=boarding_house') ?>">Boarding house</a>
+      <a class="chip" href="<?= url('listings.php?type=apartment') ?>">Apartment</a>
     </div>
   </div>
 </section>
@@ -96,7 +97,7 @@ require_once __DIR__ . '/includes/header.php';
 <section class="container pb-5">
   <div class="card shadow-sm">
     <div class="card-body text-center p-5">
-      <h2 class="h3">Own a dorm or bedspace?</h2>
+      <h2 class="h3">Own a dorm, bedspace, or apartment?</h2>
       <p class="text-body-secondary">Post your place for free on StayC and reach students looking for a home.</p>
       <a class="btn btn-primary" href="<?= url('register.php') ?>">List your place</a>
     </div>

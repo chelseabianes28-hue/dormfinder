@@ -1,20 +1,20 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
 
-$pageTitle   = 'Find a dorm';
+$pageTitle   = 'Find a place';
 $pageStyles  = ['assets/css/listings.css'];
 $pageScripts = ['assets/js/listings.js'];
 require_once __DIR__ . '/includes/header.php';
 ?>
 
 <div class="container py-5">
-  <h1 class="h2 mb-4">Find a dorm</h1>
+  <h1 class="h2 mb-4">Find a place</h1>
 
   <form id="searchForm" class="search-bar mx-auto" role="search">
     <div class="input-group input-group-lg">
       <span class="input-group-text bg-body"><i class="bi bi-search" aria-hidden="true"></i></span>
       <input type="search" class="form-control" id="q" name="q" maxlength="100"
-             placeholder="Search by school, area, or dorm name" aria-label="Search listings">
+             placeholder="Search by school, area, or listing name" aria-label="Search listings">
       <button class="btn btn-primary" type="submit">Search</button>
     </div>
   </form>
@@ -24,6 +24,7 @@ require_once __DIR__ . '/includes/header.php';
     <button type="button" class="chip filter-chip" data-type="dormitory" aria-pressed="false">Dormitory</button>
     <button type="button" class="chip filter-chip" data-type="bedspace" aria-pressed="false">Bedspace</button>
     <button type="button" class="chip filter-chip" data-type="boarding_house" aria-pressed="false">Boarding house</button>
+    <button type="button" class="chip filter-chip" data-type="apartment" aria-pressed="false">Apartment</button>
   </div>
 
   <form id="filters" class="row g-2 align-items-end mt-3 filter-row">
@@ -58,7 +59,7 @@ require_once __DIR__ . '/includes/header.php';
         <label class="form-check-label small" for="available">Has free slots</label>
       </div>
       <button type="button" class="btn btn-outline-secondary btn-sm" id="nearMe">
-        <i class="bi bi-crosshair" aria-hidden="true"></i> Dorms near me
+        <i class="bi bi-crosshair" aria-hidden="true"></i> Places near me
       </button>
     </div>
   </form>

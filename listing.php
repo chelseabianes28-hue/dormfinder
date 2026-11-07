@@ -28,7 +28,7 @@ if (!$canView) {
     require_once __DIR__ . '/includes/header.php';
     echo '<div class="container py-5 text-center"><h1 class="h3">Listing not found</h1>'
        . '<p class="text-body-secondary">It may have been removed or is not available yet.</p>'
-       . '<a class="btn btn-primary" href="' . url('listings.php') . '">Back to Find a dorm</a></div>';
+       . '<a class="btn btn-primary" href="' . url('listings.php') . '">Back to Find a place</a></div>';
     require_once __DIR__ . '/includes/footer.php';
     exit;
 }
@@ -45,11 +45,25 @@ if ($isStudent) {
     $isFavorite = (bool) $favStmt->fetchColumn();
 }
 
-$typeLabels   = ['dormitory' => 'Dormitory', 'bedspace' => 'Bedspace', 'boarding_house' => 'Boarding house'];
+$typeLabels   = ['dormitory' => 'Dormitory', 'bedspace' => 'Bedspace', 'boarding_house' => 'Boarding house', 'apartment' => 'Apartment'];
 $genderLabels = ['any' => 'All genders', 'male_only' => 'Male only', 'female_only' => 'Female only'];
 $rules     = array_values(array_filter(array_map('trim', preg_split('/\R/', (string) $listing['rules']))));
 $amenities = array_values(array_filter(array_map('trim', explode(',', (string) $listing['amenities']))));
 $slots     = (int) $listing['slots_available'];
+
+function get_amenity_icon(string $amenity): string
+{
+    $a = strtolower($amenity);
+    if (str_contains($a, 'wifi') || str_contains($a, 'internet')) return 'bi-wifi';
+    if (str_contains($a, 'air') || str_contains($a, 'ac')) return 'bi-snow';
+    if (str_contains($a, 'kitchen') || str_contains($a, 'cook')) return 'bi-cup-hot';
+    if (str_contains($a, 'security') || str_contains($a, 'cctv')) return 'bi-shield-check';
+    if (str_contains($a, 'laundry') || str_contains($a, 'wash')) return 'bi-droplet';
+    if (str_contains($a, 'generator') || str_contains($a, 'power')) return 'bi-lightning-charge';
+    if (str_contains($a, 'bed') || str_contains($a, 'mattress')) return 'bi-door-open';
+    if (str_contains($a, 'water') || str_contains($a, 'heater')) return 'bi-water';
+    return 'bi-check-circle';
+}
 
 $pageTitle   = $listing['title'];
 $pageStyles  = ['https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css', 'assets/css/listing.css'];
@@ -127,14 +141,27 @@ require_once __DIR__ . '/includes/header.php';
 <section class="info-band py-4 my-2">
   <div class="container row mx-auto g-4">
     <div class="col-md-6">
-      <h2 class="h5">Rules / Policies</h2>
-      <?php if ($rules): ?><ul class="mb-0"><?php foreach ($rules as $rule): ?><li><?= e($rule) ?></li><?php endforeach; ?></ul>
-      <?php else: ?><p class="text-body-secondary mb-0">No rules listed.</p><?php endif; ?>
+      <h2 class="h5 mb-3">Rules / Policies</h2>
+      <?php if ($rules): ?>
+        <ul class="mb-0 lh-lg"><?php foreach ($rules as $rule): ?><li><?= e($rule) ?></li><?php endforeach; ?></ul>
+      <?php else: ?>
+        <p class="text-body-secondary mb-0">No rules listed.</p>
+      <?php endif; ?>
     </div>
     <div class="col-md-6">
-      <h2 class="h5">Amenities</h2>
-      <?php if ($amenities): ?><ul class="mb-0"><?php foreach ($amenities as $item): ?><li><?= e($item) ?></li><?php endforeach; ?></ul>
-      <?php else: ?><p class="text-body-secondary mb-0">No amenities listed.</p><?php endif; ?>
+      <h2 class="h5 mb-3">Amenities</h2>
+      <?php if ($amenities): ?>
+        <div class="amenities-grid">
+          <?php foreach ($amenities as $item): ?>
+            <div class="amenity-card">
+              <i class="bi <?= get_amenity_icon($item) ?>"></i>
+              <span><?= e($item) ?></span>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php else: ?>
+        <p class="text-body-secondary mb-0">No amenities listed.</p>
+      <?php endif; ?>
     </div>
   </div>
 </section>
@@ -142,7 +169,7 @@ require_once __DIR__ . '/includes/header.php';
 <div class="container py-4">
   <?php if ($listing['description']): ?>
     <h2 class="h4">About this place</h2>
-    <p class="mb-4"><?= nl2br(e($listing['description'])) ?></p>
+    <p class="mb-4 text-body-secondary lh-lg"><?= nl2br(e($listing['description'])) ?></p>
   <?php endif; ?>
 
   <h2 class="h4">Gallery</h2>
@@ -179,28 +206,22 @@ require_once __DIR__ . '/includes/header.php';
 <div class="modal fade" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <form class="modal-content" id="inquiryForm" novalidate>
-      <div class="modal-header">
-        <h2 class="modal-title h5" id="inquiryTitle">Send an inquiry</h2>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="alert alert-danger d-none" id="inquiryError" role="alert"></div>
+      <div class="mb-3">
+        <label for="inquiryMessage" class="form-label">Message to the owner</label>
+        <textarea class="form-control" id="inquiryMessage" name="message" rows="4" maxlength="1000" required
+                  placeholder="Hi! Is this still available? I would like to ask about..."></textarea>
+        <div class="form-text"><span id="inquiryCount">0</span> / 1000 characters (at least 10)</div>
       </div>
-      <div class="modal-body">
-        <div class="alert alert-danger d-none" id="inquiryError" role="alert"></div>
-        <div class="mb-3">
-          <label for="inquiryMessage" class="form-label">Message to the owner</label>
-          <textarea class="form-control" id="inquiryMessage" name="message" rows="4" maxlength="1000" required
-                    placeholder="Hi! Is this still available? I would like to ask about..."></textarea>
-          <div class="form-text"><span id="inquiryCount">0</span> / 1000 characters (at least 10)</div>
-        </div>
-        <div>
-          <label for="moveIn" class="form-label">Preferred move-in date <span class="text-body-secondary">(optional)</span></label>
-          <input type="date" class="form-control" id="moveIn" name="move_in_date">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary" id="inquirySubmit">Send inquiry</button>
+      <div>
+        <label for="moveIn" class="form-label">Preferred move-in date <span class="text-body-secondary">(optional)</span></label>
+        <input type="date" class="form-control" id="moveIn" name="move_in_date">
       </div>
     </form>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+      <button type="submit" class="btn btn-primary" id="inquirySubmit">Send inquiry</button>
+    </div>
   </div>
 </div>
 <?php endif; ?>

@@ -4,7 +4,12 @@ require_role('owner');
 
 $user = current_user();
 
-$typeLabels = ['dormitory' => 'Dormitory', 'bedspace' => 'Bedspace', 'boarding_house' => 'Boarding house'];
+$typeLabels = [
+    'dormitory'      => 'Dormitory',
+    'bedspace'       => 'Bedspace',
+    'boarding_house' => 'Boarding house',
+    'apartment'      => 'Apartment',
+];
 $statusInfo = [
     'pending'  => ['Pending approval', 'warning'],
     'approved' => ['Approved', 'success'],
@@ -40,7 +45,7 @@ require_once __DIR__ . '/../includes/header.php';
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
     <div>
       <h1 class="h3 mb-0">My listings</h1>
-      <p class="text-body-secondary mb-0">Add, edit, and remove your dorms and bedspaces.</p>
+      <p class="text-body-secondary mb-0">Add, edit, and remove your property listings.</p>
     </div>
     <a class="btn btn-primary" href="<?= url('owner/listing_form.php') ?>">
       <i class="bi bi-plus-lg" aria-hidden="true"></i> Add listing

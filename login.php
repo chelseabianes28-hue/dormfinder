@@ -59,7 +59,7 @@ require_once __DIR__ . '/includes/header.php';
       <div class="card shadow-sm">
         <div class="card-body p-4">
           <h1 class="h3 mb-1">Log in</h1>
-          <p class="text-body-secondary">Welcome back to DormFinder.</p>
+          <p class="text-body-secondary">Welcome back to StayC.</p>
 
           <?php if ($errors): ?>
             <div class="alert alert-danger" role="alert">

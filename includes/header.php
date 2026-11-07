@@ -6,7 +6,6 @@ $user        = current_user();
 $flash       = get_flash();
 $currentPage = basename($_SERVER['PHP_SELF']);
 
-// Number of unread notifications (shown as a red badge on the envelope icon).
 $unreadCount = 0;
 if ($user && function_exists('getDB')) {
     try {
@@ -18,7 +17,6 @@ if ($user && function_exists('getDB')) {
     }
 }
 
-// The user's profile photo (shown in the navbar). Stays empty if there is none.
 $avatarPath = null;
 if ($user && function_exists('getDB')) {
     try {
@@ -36,13 +34,11 @@ function nav_active(string $page): string
     return $currentPage === $page ? ' active' : '';
 }
 
-// Local paths go through url(); full https:// links are used as they are.
 function asset_href(string $path): string
 {
     if (preg_match('#^https?://#', $path)) {
         return $path;
     }
-    // Add the file's save time, so the browser loads the newest version after every change.
     $file = dirname(__DIR__) . '/' . $path;
     return url($path) . (is_file($file) ? '?v=' . filemtime($file) : '');
 }
@@ -54,13 +50,11 @@ function asset_href(string $path): string
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= e($pageTitle) ?> | StayC — Student Accommodation Finder</title>
   
-  <!-- Google Fonts: Outfit (Logo/Brand) & Plus Jakarta Sans (Headings & Body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script>
-    // Apply the saved theme right away so the page does not flash white.
     (function () {
       var theme = 'light';
       try { theme = localStorage.getItem('df-theme') || 'light'; } catch (e) {}
@@ -96,7 +90,7 @@ function asset_href(string $path): string
               <a class="nav-link<?= nav_active('index.php') ?>" href="<?= url('index.php') ?>">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link<?= nav_active('listings.php') ?>" href="<?= url('listings.php') ?>">Find a dorm</a>
+              <a class="nav-link<?= nav_active('listings.php') ?>" href="<?= url('listings.php') ?>">Find a place</a>
             </li>
           </ul>
 
@@ -164,4 +158,3 @@ function asset_href(string $path): string
         </div>
       </div>
     <?php endif; ?>
-    

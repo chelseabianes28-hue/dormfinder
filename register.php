@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password = $_POST['password'] ?? '';
         $confirm  = $_POST['confirm_password'] ?? '';
 
-        // Server-side validation (never trust the browser alone)
+        // Server-side validation
         $nameLength = mb_strlen($old['full_name']);
         if ($nameLength < 2 || $nameLength > 100) {
             $errors[] = 'Please enter your full name (2 to 100 characters).';
@@ -83,7 +83,7 @@ require_once __DIR__ . '/includes/header.php';
       <div class="card shadow-sm">
         <div class="card-body p-4">
           <h1 class="h3 mb-1">Create your account</h1>
-          <p class="text-body-secondary">Join DormFinder to search or post dorms and bedspaces.</p>
+          <p class="text-body-secondary">Join <strong>StayC</strong> to search or post dorms, bedspaces, and apartments.</p>
 
           <?php if ($errors): ?>
             <div class="alert alert-danger" role="alert">
@@ -108,7 +108,7 @@ require_once __DIR__ . '/includes/header.php';
               <div class="form-check">
                 <input class="form-check-input" type="radio" name="role" id="roleOwner" value="owner"
                        <?= $old['role'] === 'owner' ? 'checked' : '' ?>>
-                <label class="form-check-label" for="roleOwner">Owner posting a dorm or bedspace</label>
+                <label class="form-check-label" for="roleOwner">Owner posting a dorm, bedspace, or apartment</label>
               </div>
             </fieldset>
 
