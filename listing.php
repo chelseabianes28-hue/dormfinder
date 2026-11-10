@@ -49,6 +49,7 @@ $genderLabels = ['any' => 'All genders', 'male_only' => 'Male only', 'female_onl
 $rules     = array_values(array_filter(array_map('trim', preg_split('/\R/', (string) $listing['rules']))));
 $amenities = array_values(array_filter(array_map('trim', explode(',', (string) $listing['amenities']))));
 $slots     = (int) $listing['slots_available'];
+$isFull    = ($slots <= 0 || strtolower((string) $listing['status']) === 'full');
 
 $pageTitle   = $listing['title'];
 $pageStyles  = ['https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css', 'assets/css/listing.css'];
@@ -111,7 +112,15 @@ require_once __DIR__ . '/includes/header.php';
       </div>
 
       <?php if ($isStudent): ?>
-        <button type="button" class="btn btn-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#inquiryModal">Inquire</button>
+        <?php if ($isFull): ?>
+          <div class="alert alert-warning mb-2" role="alert">
+            This property currently has no availability and is not accepting inquiries. Please wait for an update.
+          </div>
+          <button type="button" class="btn btn-secondary w-100 mb-2" disabled>No Availability</button>
+        <?php else: ?>
+          <button type="button" class="btn btn-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#inquiryModal">Inquire</button>
+        <?php endif; ?>
+
         <button type="button" class="btn btn-outline-secondary w-100" id="favoriteBtn" aria-pressed="<?= $isFavorite ? 'true' : 'false' ?>">
           <i class="bi <?= $isFavorite ? 'bi-heart-fill' : 'bi-heart' ?>" aria-hidden="true"></i>
           <span><?= $isFavorite ? 'Saved to favorites' : 'Add to favorite' ?></span>
@@ -140,33 +149,19 @@ require_once __DIR__ . '/includes/header.php';
           <?php foreach ($amenities as $item): ?>
             <?php
               $a = strtolower(trim($item));
-
-              // 1. Laundry / Wash / Space / Dryer
               if (str_contains($a, 'laundry') || str_contains($a, 'wash') || str_contains($a, 'space') || str_contains($a, 'dryer')) {
                   $icon = 'bi-droplet-half';
-              }
-              // 2. Wi-Fi / Internet
-              elseif (str_contains($a, 'wifi') || str_contains($a, 'wi-fi') || str_contains($a, 'internet')) {
+              } elseif (str_contains($a, 'wifi') || str_contains($a, 'wi-fi') || str_contains($a, 'internet')) {
                   $icon = 'bi-wifi';
-              }
-              // 3. Aircon / AC (use exact word boundary \bac\b so "space" doesn't trigger it)
-              elseif (str_contains($a, 'aircon') || str_contains($a, 'air') || preg_match('/\bac\b/i', $a)) {
+              } elseif (str_contains($a, 'aircon') || str_contains($a, 'air') || preg_match('/\bac\b/i', $a)) {
                   $icon = 'bi-snow';
-              }
-              // 4. Parking / Garage / Lot / Vehicle / Car
-              elseif (str_contains($a, 'park') || str_contains($a, 'garage') || str_contains($a, 'car') || str_contains($a, 'lot') || str_contains($a, 'vehicle')) {
+              } elseif (str_contains($a, 'park') || str_contains($a, 'garage') || str_contains($a, 'car') || str_contains($a, 'lot') || str_contains($a, 'vehicle')) {
                   $icon = 'bi-car-front';
-              }
-              // 5. Kitchen / Cooking
-              elseif (str_contains($a, 'kitchen') || str_contains($a, 'cook')) {
+              } elseif (str_contains($a, 'kitchen') || str_contains($a, 'cook')) {
                   $icon = 'bi-cup-hot';
-              }
-              // 6. Security / CCTV
-              elseif (str_contains($a, 'security') || str_contains($a, 'cctv')) {
+              } elseif (str_contains($a, 'security') || str_contains($a, 'cctv')) {
                   $icon = 'bi-shield-check';
-              }
-              // 7. Default checkmark icon for any new amenity
-              else {
+              } else {
                   $icon = 'bi-check-circle';
               }
             ?>
@@ -219,25 +214,37 @@ require_once __DIR__ . '/includes/header.php';
   </div>
 </div>
 
-<?php if ($isStudent): ?>
+<?php if ($isStudent && !$isFull): ?>
 <div class="modal fade" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <form class="modal-content" id="inquiryForm" novalidate>
-      <div class="alert alert-danger d-none" id="inquiryError" role="alert"></div>
-      <div class="mb-3">
-        <label for="inquiryMessage" class="form-label">Message to the owner</label>
-        <textarea class="form-control" id="inquiryMessage" name="message" rows="4" maxlength="1000" required
-                  placeholder="Hi! Is this still available? I would like to ask about..."></textarea>
-        <div class="form-text"><span id="inquiryCount">0</span> / 1000 characters (at least 10)</div>
-      </div>
-      <div>
-        <label for="moveIn" class="form-label">Preferred move-in date <span class="text-body-secondary">(optional)</span></label>
-        <input type="date" class="form-control" id="moveIn" name="move_in_date">
-      </div>
-    </form>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-      <button type="submit" class="btn btn-primary" id="inquirySubmit">Send inquiry</button>
+    <div class="modal-content">
+      <form id="inquiryForm" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title" id="inquiryTitle">Message to the owner</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="alert alert-danger d-none" id="inquiryError" role="alert"></div>
+          
+          <div class="mb-3">
+            <label for="inquiryMessage" class="form-label">Message to the owner</label>
+            <textarea class="form-control" id="inquiryMessage" name="message" rows="4" maxlength="1000" required
+                      placeholder="Hi! Is this still available? I would like to ask about..."></textarea>
+            <div class="form-text text-end"><span id="inquiryCount">0</span> / 1000 characters (at least 10)</div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="moveIn" class="form-label">Preferred move-in date <span class="text-body-secondary">(optional)</span></label>
+            <input type="date" class="form-control" id="moveIn" name="move_in_date">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="inquirySubmit">Send inquiry</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

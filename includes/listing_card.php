@@ -1,9 +1,17 @@
 <?php
 // Reusable listing card. Expects $listing with: id, title, address, city, type,
 // price_per_month, slots_available, gender_policy, photo (may be null).
-$typeLabels   = ['dormitory' => 'Dormitory', 'bedspace' => 'Bedspace', 'boarding_house' => 'Boarding house'];
+$typeLabels = [
+    'dormitory'      => 'Dormitory', 
+    'bedspace'       => 'Bedspace', 
+    'boarding_house' => 'Boarding house',
+    'apartment'      => 'Apartment'
+];
 $genderLabels = ['any' => 'All genders', 'male_only' => 'Male only', 'female_only' => 'Female only'];
 $slots        = (int) $listing['slots_available'];
+
+$rawType       = strtolower(trim((string) ($listing['type'] ?? '')));
+$typeBadgeText = $typeLabels[$rawType] ?? ucfirst($rawType);
 ?>
 <article class="card listing-card shadow-sm h-100">
   <div class="position-relative">
@@ -15,9 +23,11 @@ $slots        = (int) $listing['slots_available'];
         <i class="bi bi-image" aria-hidden="true"></i>
       </div>
     <?php endif; ?>
-    <span class="badge text-bg-light listing-badge">
-      <?= e($typeLabels[$listing['type']] ?? $listing['type']) ?>
-    </span>
+    <?php if (!empty($typeBadgeText)): ?>
+      <span class="badge text-bg-light listing-badge">
+        <?= e($typeBadgeText) ?>
+      </span>
+    <?php endif; ?>
   </div>
 
   <div class="card-body d-flex flex-column">
