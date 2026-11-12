@@ -96,7 +96,8 @@ mysql -u root < database/database.sql
 <img width="963" height="505" alt="image" src="https://github.com/user-attachments/assets/69a886be-a66e-4dcc-bd21-20d7aaa8d345" />
 <img width="953" height="495" alt="image" src="https://github.com/user-attachments/assets/450fcfea-bd2e-4cd4-8222-ef29a9b7faff" />
 <img width="968" height="509" alt="image" src="https://github.com/user-attachments/assets/5bf3c379-4a8f-42fe-83f1-13ca9d773ac5" />
-<img width="984" height="513" alt="image" src="https://github.com/user-attachments/assets/ae2449a0-f363-4e4b-9fcf-60086cec2206" />
+<img width="1364" height="716" alt="image" src="https://github.com/user-attachments/assets/89144e6b-019e-48eb-a73f-93d54d283eb5" />
+<img width="1365" height="715" alt="image" src="https://github.com/user-attachments/assets/06e43c4f-cb38-4476-8857-6122b3c3033e" />
 <img width="968" height="515" alt="image" src="https://github.com/user-attachments/assets/e2fedbf0-3bc3-4499-96d1-9ca5422d4541" />
 <img width="962" height="506" alt="image" src="https://github.com/user-attachments/assets/1c1a1f0c-2aca-4463-891d-49b03eec3d5b" />
 <img width="983" height="506" alt="image" src="https://github.com/user-attachments/assets/526cef22-dd42-4675-b57e-03ee2df58277" />
