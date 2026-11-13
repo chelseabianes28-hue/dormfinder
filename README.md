@@ -109,8 +109,8 @@ Already have an older database? Run `database/add_avatar_column.sql` and `databa
 <img width="1365" height="716" alt="image" src="https://github.com/user-attachments/assets/e77fd0a5-2c16-4fc0-8ff7-8462baf92938" />
 <img width="1364" height="718" alt="image" src="https://github.com/user-attachments/assets/080086fd-206d-45be-b57a-1e1150c6e41e" />
 <img width="1365" height="721" alt="image" src="https://github.com/user-attachments/assets/0dab2bb5-2da9-47dd-91f7-4209847b4547" />
-<img width="1365" height="717" alt="image" src="https://github.com/user-attachments/assets/d45fe9ec-4161-4b6a-97e9-371cbf796451" />
-<img width="1365" height="717" alt="image" src="https://github.com/user-attachments/assets/f559556b-59f8-4fcc-aa01-582db8256cad" />
+<img width="1214" height="464" alt="image" src="https://github.com/user-attachments/assets/f07d487d-fba2-4863-b10a-e4b64ffbf764" />
+<img width="1219" height="395" alt="image" src="https://github.com/user-attachments/assets/2fbba86a-7a2f-4f2e-a402-5eb962fc8cec" />
 <img width="1365" height="717" alt="image" src="https://github.com/user-attachments/assets/90dd453e-eeee-40b2-ad4d-02a3dc593a4b" />
 <img width="1365" height="717" alt="image" src="https://github.com/user-attachments/assets/d5713d5b-81c3-40fa-985d-1b8619d03790" />
 <img width="1363" height="717" alt="image" src="https://github.com/user-attachments/assets/6157fdad-0ad6-4ca9-b42a-bf65b7e466ca" />
