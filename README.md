@@ -17,17 +17,20 @@ StayC is a web application that helps students find an apartment, dormitory, boa
 - Save favorite listings
 - Send inquiries or reservation requests to owners
 - Receive in-system notifications
+- Edit profile details and upload an avatar with image validation
 
 **Owners**
 - Add, edit, and delete their own listings
 - Upload listing photos with file validation
 - View and respond to student inquiries
 - Dashboard with charts
+- Edit profile details and upload an avatar with image validation
 
 **Administrators**
 - Approve or reject new listings
 - Manage users and remove inappropriate content
 - Receive user inquiries and support reports via the admin contact page
+- Edit profile details and upload an avatar with image validation
 
 **General**
 - Responsive design for desktop, tablet, and mobile
