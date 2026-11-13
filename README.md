@@ -16,14 +16,16 @@ StayC is a web application that helps students find an apartment, dormitory, boa
 - View listings on an interactive map and find dorms near their location
 - Save favorite listings
 - Send inquiries or reservation requests to owners
-- Receive in-system notifications
+- Receive in-system notifications, with a live badge and pop-up that update every 30 seconds
+- Sort listings by nearest using the browser's location
 - Edit profile details and upload an avatar with image validation
 
 **Owners**
 - Add, edit, and delete their own listings
 - Upload listing photos with file validation
+- Place the map pin from the typed address (forward geocoding), or fill in the address from the pin or GPS (reverse geocoding)
 - View and respond to student inquiries
-- Dashboard with charts
+- Live dashboard with charts that refresh every 30 seconds
 - Edit profile details and upload an avatar with image validation
 
 **Administrators**
@@ -36,7 +38,9 @@ StayC is a web application that helps students find an apartment, dormitory, boa
 - Responsive design for desktop, tablet, and mobile
 - Role-based access control (Student, Owner, Admin)
 - Secure password hashing, sessions, and prepared SQL statements
-- Dark mode and installable web app (PWA)
+- Dark mode saved with localStorage and synced across tabs
+- Installable web app (PWA): web app manifest, service worker, offline page, and app icons
+- Regex-based amenity engine that turns typed amenities ("Free Wi-Fi", "Aircon") into icons
 
 ## Technologies
 
@@ -44,11 +48,11 @@ StayC is a web application that helps students find an apartment, dormitory, boa
 - CSS3
 - JavaScript ES6+
 - Bootstrap 5
-- Leaflet (OpenStreetMap)
+- Leaflet (OpenStreetMap) and Nominatim geocoding
 - Chart.js
 - PHP
 - MySQL / MariaDB
-- Fetch API
+- Fetch API, Geolocation API, Web Storage API, Service Worker API
 - Git / GitHub
 
 ## Installation Instructions
@@ -77,6 +81,8 @@ Alternatively, import from the command line:
 ```
 mysql -u root < database/database.sql
 ```
+
+Already have an older database? Run `database/add_avatar_column.sql` and `database/add_apartment_type.sql` once in the SQL tab.
 
 ## Screenshots
 
@@ -112,7 +118,15 @@ mysql -u root < database/database.sql
 <img width="1002" height="527" alt="image" src="https://github.com/user-attachments/assets/bf609f99-e50f-4a29-9103-e43ba24eda82" />
 <img width="1022" height="529" alt="image" src="https://github.com/user-attachments/assets/387b06c4-11cb-4a4b-a966-4848c944d58e" />
 
+### Updated listing page (November 2026)
 
+**Listing details: key facts, "View on map", and the owner contact card**
+
+![Listing details redesign](docs/screenshots/listing-details-redesign.png)
+
+**Sending an inquiry: listing summary and quick messages**
+
+![Inquiry pop-up redesign](docs/screenshots/inquiry-popup-redesign.png)
 
 ## Live Demo
 

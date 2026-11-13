@@ -1,5 +1,7 @@
 # Secrets - never commit these
 includes/config.php
+includes/config.php.*
+db.php
 .env
 
 # User uploaded photos (keep the folder and its security file)
