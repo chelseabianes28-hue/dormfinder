@@ -66,41 +66,29 @@ function admin_email(): string
     return filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : '';
 }
 
-// Map amenity keywords to Bootstrap Icons
+// Regex-based amenity engine: turns a typed amenity ("Free Wi-Fi", "Aircon room") into a Bootstrap Icon.
+// \b = word boundary, so "ac" matches "AC" or "A/C" but not the "ac" inside "space".
 if (!function_exists('get_amenity_icon')) {
     function get_amenity_icon(string $amenity): string
     {
-        $a = strtolower(trim($amenity));
-        
-        // Wi-Fi / Internet
-        if (str_contains($a, 'wifi') || str_contains($a, 'wi-fi') || str_contains($a, 'internet')) {
-            return 'bi-wifi';
+        $rules = [
+            'bi-wifi'         => '/\b(wi-?fi|internet|wireless)\b/i',
+            'bi-snow'         => '/\b(air[\s-]?con(ditioning|ditioned)?|aircon|a\/?c|ac)\b/i',
+            'bi-droplet-half' => '/\b(laundry|washing|washer|dryer|clothes)\b/i',
+            'bi-car-front'    => '/\b(parking|garage|car|vehicle|motor(cycle)?)\b/i',
+            'bi-cup-hot'      => '/\b(kitchen|cook(ing)?|stove|pantry)\b/i',
+            'bi-shield-check' => '/\b(security|cctv|guard|gated)\b/i',
+            'bi-water'        => '/\b(water|heater|shower|bath(room)?|toilet|cr)\b/i',
+            'bi-fan'          => '/\b(electric fan|fan)\b/i',
+            'bi-lightning'    => '/\b(electric(ity)?|power|outlet|generator)\b/i',
+            'bi-book'         => '/\b(study|desk|library)\b/i',
+            'bi-tv'           => '/\b(tv|television|cable)\b/i',
+        ];
+        foreach ($rules as $icon => $pattern) {
+            if (preg_match($pattern, $amenity)) {
+                return $icon;
+            }
         }
-        // Aircon / AC
-        if (str_contains($a, 'air') || str_contains($a, 'ac')) {
-            return 'bi-snow';
-        }
-        // Laundry / Wash / Dryer / Space
-        if (str_contains($a, 'laundry') || str_contains($a, 'wash') || str_contains($a, 'dryer') || str_contains($a, 'clothes') || str_contains($a, 'space')) {
-            return 'bi-droplet-half';
-        }
-        // Parking / Garage / Lot / Vehicle / Car
-        if (str_contains($a, 'park') || str_contains($a, 'garage') || str_contains($a, 'vehicle') || str_contains($a, 'car') || str_contains($a, 'lot')) {
-            return 'bi-car-front';
-        }
-        // Kitchen / Cooking
-        if (str_contains($a, 'kitchen') || str_contains($a, 'cook') || str_contains($a, 'stove')) {
-            return 'bi-cup-hot';
-        }
-        // Security / CCTV / Guard
-        if (str_contains($a, 'security') || str_contains($a, 'cctv') || str_contains($a, 'guard')) {
-            return 'bi-shield-check';
-        }
-        // Water / Heater / Shower
-        if (str_contains($a, 'water') || str_contains($a, 'heater') || str_contains($a, 'shower')) {
-            return 'bi-water';
-        }
-        // Default fallback icon for any new amenity
-        return 'bi-check-circle';
+        return 'bi-check-circle';   // default icon for any other amenity
     }
 }

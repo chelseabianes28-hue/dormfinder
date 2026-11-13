@@ -1,5 +1,6 @@
 <?php
-// Turns a typed address into map coordinates using OpenStreetMap's Nominatim service.
+// Forward geocoding (typed address -> map coordinates) and reverse geocoding (map pin -> address)
+// using OpenStreetMap's Nominatim service.
 // Follows the Nominatim usage policy: identifying User-Agent, at most 1 request per second
 // for the whole app, cached results, one lookup per click (no search-as-you-type).
 require_once __DIR__ . '/../includes/auth.php';
@@ -47,17 +48,18 @@ function http_get(string $url): string
     return $body;
 }
 
-// One cached, rate-limited lookup. Returns the first match or null.
-function lookup(string $query): ?array
+// One cached, rate-limited request to Nominatim ("search" or "reverse"). Returns the decoded JSON.
+function nominatim(string $endpoint, array $params)
 {
+    $params += ['format' => 'jsonv2'];
     $cacheDir = sys_get_temp_dir() . '/dormfinder_geocache';
     if (!is_dir($cacheDir)) {
         @mkdir($cacheDir, 0755, true);
     }
-    $cacheFile = $cacheDir . '/' . md5(mb_strtolower($query)) . '.json';
+    $cacheFile = $cacheDir . '/' . md5($endpoint . '|' . mb_strtolower(json_encode($params))) . '.json';
     if (is_file($cacheFile) && filemtime($cacheFile) > time() - 30 * 86400) {
         $cached = json_decode((string) file_get_contents($cacheFile), true);
-        return $cached['result'] ?? null;
+        return $cached['data'] ?? null;
     }
 
     // Shared lock file so all users together stay under 1 request per second.
@@ -69,10 +71,7 @@ function lookup(string $query): ?array
         if ($wait > 0) {
             usleep((int) ($wait * 1000000));
         }
-        $url = 'https://nominatim.openstreetmap.org/search?' . http_build_query([
-            'q' => $query, 'format' => 'jsonv2', 'limit' => 1, 'countrycodes' => GEO_COUNTRY,
-        ]);
-        $rows = json_decode(http_get($url), true);
+        $data = json_decode(http_get('https://nominatim.openstreetmap.org/' . $endpoint . '?' . http_build_query($params)), true);
     } finally {
         ftruncate($lock, 0);
         rewind($lock);
@@ -81,11 +80,36 @@ function lookup(string $query): ?array
         fclose($lock);
     }
 
-    $result = is_array($rows) && isset($rows[0]['lat'], $rows[0]['lon'])
+    @file_put_contents($cacheFile, json_encode(['data' => $data]));
+    return $data;
+}
+
+// Forward geocoding: text address -> first match or null.
+function lookup(string $query): ?array
+{
+    $rows = nominatim('search', ['q' => $query, 'limit' => 1, 'countrycodes' => GEO_COUNTRY]);
+    return is_array($rows) && isset($rows[0]['lat'], $rows[0]['lon'])
         ? ['lat' => (float) $rows[0]['lat'], 'lng' => (float) $rows[0]['lon'], 'name' => (string) ($rows[0]['display_name'] ?? '')]
         : null;
-    @file_put_contents($cacheFile, json_encode(['result' => $result]));
-    return $result;
+}
+
+// Reverse geocoding: map coordinates -> street address and city, or null.
+function reverse_lookup(float $lat, float $lng): ?array
+{
+    $row = nominatim('reverse', ['lat' => round($lat, 6), 'lon' => round($lng, 6), 'zoom' => 18, 'addressdetails' => 1]);
+    if (!is_array($row) || empty($row['address'])) {
+        return null;
+    }
+    $a      = $row['address'];
+    $street = trim(implode(' ', array_filter([$a['house_number'] ?? '', $a['road'] ?? ''])));
+    $area   = $a['suburb'] ?? $a['quarter'] ?? $a['neighbourhood'] ?? $a['village'] ?? '';
+    $city   = $a['city'] ?? $a['town'] ?? $a['municipality'] ?? $a['county'] ?? '';
+    $address = implode(', ', array_filter([$street, $area]));
+    return [
+        'address'      => mb_substr($address, 0, 255),
+        'city'         => mb_substr((string) $city, 0, 100),
+        'display_name' => (string) ($row['display_name'] ?? ''),
+    ];
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -97,6 +121,29 @@ if (!$user) {
 }
 if (!in_array($user['role'], ['owner', 'admin'], true)) {
     out(['ok' => false, 'error' => 'Only owners can look up addresses.'], 403);
+}
+
+// Reverse geocoding: the owner placed the pin (map click or GPS) -> suggest the address.
+if (isset($_GET['lat'], $_GET['lng'])) {
+    $lat = $_GET['lat'];
+    $lng = $_GET['lng'];
+    if (!is_numeric($lat) || !is_numeric($lng) || abs((float) $lat) > 90 || abs((float) $lng) > 180) {
+        out(['ok' => false, 'error' => 'Invalid map position.'], 422);
+    }
+    if (($_SESSION['geo_last'] ?? 0) > microtime(true) - 2) {
+        out(['ok' => false, 'error' => 'Please wait a moment before trying again.'], 429);
+    }
+    $_SESSION['geo_last'] = microtime(true);
+    try {
+        $place = reverse_lookup((float) $lat, (float) $lng);
+        if ($place && $place['city'] !== '') {
+            out(['ok' => true] + $place);
+        }
+        out(['ok' => false, 'error' => 'No address found for this spot. Please type it.'], 404);
+    } catch (Throwable $ex) {
+        error_log('Reverse geocode failed: ' . $ex->getMessage());
+        out(['ok' => false, 'error' => 'The address lookup is not available right now. Please type the address.'], 502);
+    }
 }
 
 $address = trim((string) ($_GET['address'] ?? ''));

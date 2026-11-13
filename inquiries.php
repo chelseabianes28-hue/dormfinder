@@ -10,37 +10,7 @@ $inquiries     = [];
 try {
     $pdo = getDB();
 
-    // Handle Owner Action (Accept / Decline) via POST request
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $isOwner) {
-        $inquiryId = (int) ($_POST['inquiry_id'] ?? 0);
-        $action    = $_POST['action'] ?? '';
-        $csrfToken = $_POST['csrf_token'] ?? '';
-
-        if ($inquiryId > 0 && verify_csrf_token($csrfToken) && in_array($action, ['accept', 'decline'], true)) {
-            $newStatus = ($action === 'accept') ? 'accepted' : 'declined';
-            
-            // Verify ownership of the listing associated with the inquiry
-            $inqStmt = $pdo->prepare(
-                'SELECT i.id, i.student_id, l.title 
-                   FROM inquiries i 
-                   JOIN listings l ON l.id = i.listing_id 
-                  WHERE i.id = ? AND l.owner_id = ?'
-            );
-            $inqStmt->execute([$inquiryId, $user['id']]);
-            $inqData = $inqStmt->fetch();
-
-            if ($inqData) {
-                // Update inquiry status
-                $updateStmt = $pdo->prepare('UPDATE inquiries SET status = ? WHERE id = ?');
-                $updateStmt->execute([$newStatus, $inquiryId]);
-
-                // Trigger notification for the student
-                $notifMsg = "Your inquiry for '" . $inqData['title'] . "' was " . $newStatus . " by the owner.";
-                $notifStmt = $pdo->prepare('INSERT INTO notifications (user_id, message, is_read, created_at) VALUES (?, ?, 0, NOW())');
-                $notifStmt->execute([$inqData['student_id'], $notifMsg]);
-            }
-        }
-    }
+    // Accept / Decline is handled by api/inquiry_update.php (called from assets/js/inquiries.js).
 
     // Show the latest notifications, then mark them as read.
     $notifStmt = $pdo->prepare('SELECT message, is_read, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC, id DESC LIMIT 8');

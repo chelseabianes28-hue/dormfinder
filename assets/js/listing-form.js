@@ -1,4 +1,4 @@
-// Add/Edit listing form: map pin picker, character counter, and photo preview.
+// Add/Edit listing form: map pin picker (forward + reverse geocoding), character counter, and photo preview.
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -90,7 +90,26 @@ const setupMapPicker = () => {
     setAnchor(start[0], start[1]);
   }
 
-  map.on('click', (event) => tryMove(event.latlng.lat, event.latlng.lng));
+  map.on('click', (event) => {
+    if (tryMove(event.latlng.lat, event.latlng.lng)) suggestAddress(event.latlng.lat, event.latlng.lng);
+  });
+
+  // Reverse geocoding: the pin was placed by hand or by GPS, so suggest the address for that spot.
+  // Only empty fields are filled, so an address the owner typed is never overwritten.
+  const suggestAddress = async (lat, lng) => {
+    if (addressInput.value.trim() && cityInput.value.trim()) return;
+    findMsg.textContent = 'Looking up the address of this spot...';
+    try {
+      const response = await fetch(`${mapEl.dataset.geocodeUrl}?${new URLSearchParams({ lat, lng })}`, { headers: { Accept: 'application/json' } });
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || 'Request failed.');
+      if (!addressInput.value.trim() && data.address) addressInput.value = data.address;
+      if (!cityInput.value.trim() && data.city) cityInput.value = data.city;
+      findMsg.textContent = `Address suggested from the pin: ${data.display_name}. Please check it and edit if needed.`;
+    } catch (error) {
+      findMsg.textContent = error.message || 'Please type the address.';
+    }
+  };
 
   // Look up the typed address (one request per click or per finished field, never while typing).
   const findAddress = async ({ auto }) => {
@@ -146,6 +165,7 @@ const setupMapPicker = () => {
         userMoved = true;
         setPin(coords.latitude, coords.longitude);
         map.setView([coords.latitude, coords.longitude], 17);
+        suggestAddress(coords.latitude, coords.longitude);
       },
       () => { locateMsg.textContent = 'We could not get your location. Please type the address instead.'; }
     );

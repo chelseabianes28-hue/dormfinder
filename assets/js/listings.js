@@ -2,7 +2,7 @@
 
 const API_URL = 'api/listings.php';
 const peso = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' });
-const TYPE_LABELS = { dormitory: 'Dormitory', bedspace: 'Bedspace', boarding_house: 'Boarding house' };
+const TYPE_LABELS = { dormitory: 'Dormitory', bedspace: 'Bedspace', boarding_house: 'Boarding house', apartment: 'Apartment' };
 const GENDER_LABELS = { any: 'All genders', male_only: 'Male only', female_only: 'Female only' };
 
 const state = { q: '', type: '', gender: '', min: '', max: '', sort: 'newest', available: false, page: 1, lat: null, lng: null };

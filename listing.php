@@ -147,26 +147,9 @@ require_once __DIR__ . '/includes/header.php';
       <?php if ($amenities): ?>
         <div class="amenities-grid">
           <?php foreach ($amenities as $item): ?>
-            <?php
-              $a = strtolower(trim($item));
-              if (str_contains($a, 'laundry') || str_contains($a, 'wash') || str_contains($a, 'space') || str_contains($a, 'dryer')) {
-                  $icon = 'bi-droplet-half';
-              } elseif (str_contains($a, 'wifi') || str_contains($a, 'wi-fi') || str_contains($a, 'internet')) {
-                  $icon = 'bi-wifi';
-              } elseif (str_contains($a, 'aircon') || str_contains($a, 'air') || preg_match('/\bac\b/i', $a)) {
-                  $icon = 'bi-snow';
-              } elseif (str_contains($a, 'park') || str_contains($a, 'garage') || str_contains($a, 'car') || str_contains($a, 'lot') || str_contains($a, 'vehicle')) {
-                  $icon = 'bi-car-front';
-              } elseif (str_contains($a, 'kitchen') || str_contains($a, 'cook')) {
-                  $icon = 'bi-cup-hot';
-              } elseif (str_contains($a, 'security') || str_contains($a, 'cctv')) {
-                  $icon = 'bi-shield-check';
-              } else {
-                  $icon = 'bi-check-circle';
-              }
-            ?>
+            <?php $icon = get_amenity_icon($item); // regex engine in includes/init.php ?>
             <div class="amenity-card">
-              <i class="bi <?= $icon ?>"></i>
+              <i class="bi <?= e($icon) ?>" aria-hidden="true"></i>
               <span><?= e($item) ?></span>
             </div>
           <?php endforeach; ?>
@@ -250,4 +233,4 @@ require_once __DIR__ . '/includes/header.php';
 </div>
 <?php endif; ?>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once __DIR__ . '/includes/footer.php'; ?>

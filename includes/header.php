@@ -48,6 +48,11 @@ function asset_href(string $path): string
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2D6AF0">
+  <meta name="app-base" content="<?= e(BASE_URL) ?>">
+  <link rel="manifest" href="<?= e(url('manifest.json')) ?>">
+  <link rel="icon" type="image/png" sizes="32x32" href="<?= e(url('assets/img/icons/favicon-32.png')) ?>">
+  <link rel="apple-touch-icon" href="<?= e(url('assets/img/icons/apple-touch-icon.png')) ?>">
   <title><?= e($pageTitle) ?> | StayC — Student Accommodation Finder</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -111,10 +116,11 @@ function asset_href(string $path): string
               <?php if (in_array($user['role'], ['student', 'owner'], true)): ?>
                 <li class="nav-item">
                   <a class="nav-link position-relative<?= nav_active('inquiries.php') ?>" href="<?= url('inquiries.php') ?>"
+                     id="inboxLink" data-endpoint="<?= e(url('api/notifications.php')) ?>" data-unread="<?= (int) $unreadCount ?>"
                      aria-label="Inquiries<?= $unreadCount ? ', ' . $unreadCount . ' new' : '' ?>">
                     <i class="bi bi-envelope fs-5" aria-hidden="true"></i><span class="d-lg-none ms-2">Inquiries</span>
                     <?php if ($unreadCount > 0): ?>
-                      <span class="badge rounded-pill text-bg-danger ms-1 ms-lg-0 position-lg-absolute"><?= $unreadCount ?></span>
+                      <span class="badge rounded-pill text-bg-danger ms-1 ms-lg-0 position-lg-absolute" id="inboxBadge"><?= $unreadCount ?></span>
                     <?php endif; ?>
                   </a>
                 </li>
@@ -157,4 +163,4 @@ function asset_href(string $path): string
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       </div>
-    <?php endif; ?>
+    <?php endif; ?>

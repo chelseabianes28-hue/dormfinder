@@ -19,8 +19,8 @@ InfinityFree (free plan). Tell your instructor which host you use.
 ## Steps
 1. Create a hosting account and a free subdomain. Note the control panel address, the FTP details, and the final website address.
 2. In the control panel, open MySQL Databases and create a database. Note the database name, user name, password, and the MySQL host name. The host name is not "localhost" on most free hosts.
-3. Open phpMyAdmin from the control panel, click your database, click Import, and import `database/database_hosting.sql`. Six tables should appear.
-4. Upload the project files with FTP (for example FileZilla) or the online file manager into the website folder (usually `htdocs`). Upload everything except the `database` folder and the `.git` folder.
+3. Open phpMyAdmin from the control panel, click your database, click Import, and import `database/database_hosting.sql`. Six tables should appear. If the database already existed before the "Apartment" type was added, also run `database/add_apartment_type.sql` in the SQL tab.
+4. Upload the project files with FTP (for example FileZilla) or the online file manager into the website folder (usually `htdocs`). Upload everything except the `database` folder and the `.git` folder. Make sure `manifest.json`, `sw.js`, and `offline.html` are in the same folder as `index.php` (they make the site installable).
 5. On the host, create `includes/config.php` by copying `includes/config.example.php` and filling in the host values:
    - `db_host`: the MySQL host name from step 2
    - `db_name`, `db_user`, `db_pass`: from step 2
@@ -39,6 +39,9 @@ InfinityFree (free plan). Tell your instructor which host you use.
 - Admin can approve or reject listings and disable users
 - Dashboards and charts load
 - Dark mode stays after refresh
+- The browser offers to install the app (address-bar install icon, or Add to Home Screen on a phone)
+- Dashboard shows "Live · updates every 30 seconds"; a new inquiry makes the owner's badge go up without reloading
+- On the Add listing form, clicking the map with an empty address fills in the suggested address
 - Pages look right at 1366 x 768, 768 x 1024, and 375 x 667
 
 ## Troubleshooting

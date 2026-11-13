@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS listings (
   owner_id        INT UNSIGNED NOT NULL,
   title           VARCHAR(150) NOT NULL,
   description     TEXT NULL,
-  type            ENUM('dormitory','bedspace','boarding_house') NOT NULL DEFAULT 'dormitory',
+  type            ENUM('dormitory','bedspace','boarding_house','apartment') NOT NULL DEFAULT 'dormitory',
   price_per_month DECIMAL(10,2) NOT NULL,
   slots_total     SMALLINT UNSIGNED NOT NULL DEFAULT 1,
   slots_available SMALLINT UNSIGNED NOT NULL DEFAULT 1,

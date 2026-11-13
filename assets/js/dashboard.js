@@ -1,4 +1,4 @@
-// Dashboard charts (Chart.js), loaded with the Fetch API, styled to match the site, and theme-aware.
+// Dashboard charts (Chart.js), loaded with the Fetch API, refreshed live every 30 seconds, and theme-aware.
 const css = (name, fallback) => getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
 const palette = () => ({
   text: css('--bs-secondary-color', '#6c757d'),
@@ -60,11 +60,25 @@ const barValues = {
   },
 };
 
+// Find the chart's canvas. If an earlier load showed "No data yet", put a fresh canvas back.
+const ensureCanvas = (canvasId) => {
+  const id = canvasId.slice(1);
+  let canvas = document.getElementById(id);
+  if (canvas) return canvas;
+  const holder = document.querySelector(`[data-chart-for="${id}"]`);
+  if (!holder) return null;
+  canvas = Object.assign(document.createElement('canvas'), { id });
+  canvas.setAttribute('role', 'img');
+  holder.replaceChildren(canvas);
+  return canvas;
+};
+
 const drawChart = (canvasId, type, items, title) => {
-  const canvas = document.querySelector(canvasId);
+  const canvas = ensureCanvas(canvasId);
   if (!canvas) return;
 
   if (!items || items.every((item) => item.value === 0)) {
+    canvas.parentElement.dataset.chartFor = canvasId.slice(1);
     canvas.parentElement.replaceChildren(Object.assign(document.createElement('p'), {
       className: 'text-body-secondary mb-0 pt-5 text-center', textContent: 'No data yet.',
     }));
@@ -130,24 +144,51 @@ const drawChart = (canvasId, type, items, title) => {
   }));
 };
 
-const loadCharts = async () => {
+// Live dashboard: the numbers are checked again every 30 seconds (only while the tab is visible).
+// The charts are redrawn only when something actually changed.
+const REFRESH_MS = 30000;
+let lastData = '';
+
+const liveLabel = (box) => {
+  let label = document.querySelector('#chartsLive');
+  if (!label) {
+    label = Object.assign(document.createElement('p'), { id: 'chartsLive', className: 'small text-body-secondary mb-2' });
+    label.setAttribute('aria-live', 'polite');
+    box.before(label);
+  }
+  return label;
+};
+
+const render = (data) => {
+  instances.splice(0).forEach((chart) => chart.destroy());
+  const { charts } = data;
+  drawChart('#chartStatus', 'doughnut', charts.status, 'Listings by status');
+  if (data.role === 'admin') {
+    drawChart('#chartRoles', 'doughnut', charts.roles, 'Users by role');
+    drawChart('#chartCities', 'bar', charts.cities, 'Approved listings by city');
+  } else {
+    drawChart('#chartInquiries', 'bar', charts.inquiries, 'Inquiries per listing');
+  }
+};
+
+const loadCharts = async ({ force = false } = {}) => {
   const box = document.querySelector('#dashboardCharts');
   if (!box) return;
 
   try {
-    const response = await fetch(box.dataset.endpoint, { headers: { Accept: 'application/json' } });
+    const response = await fetch(box.dataset.endpoint, { headers: { Accept: 'application/json' }, cache: 'no-store' });
     const data = await response.json();
     if (!response.ok || !data.ok) throw new Error(data.error || 'Request failed.');
 
-    const { charts } = data;
-    drawChart('#chartStatus', 'doughnut', charts.status, 'Listings by status');
-    if (data.role === 'admin') {
-      drawChart('#chartRoles', 'doughnut', charts.roles, 'Users by role');
-      drawChart('#chartCities', 'bar', charts.cities, 'Approved listings by city');
-    } else {
-      drawChart('#chartInquiries', 'bar', charts.inquiries, 'Inquiries per listing');
+    const text = JSON.stringify(data.charts);
+    if (force || text !== lastData) {
+      lastData = text;
+      render(data);
     }
+    const time = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+    liveLabel(box).innerHTML = `<i class="bi bi-broadcast text-success" aria-hidden="true"></i> Live · updates every 30 seconds · last checked ${time}`;
   } catch (error) {
+    if (lastData) return;                 // keep the charts we already have if one refresh fails
     box.innerHTML = '<div class="col-12"><div class="alert alert-danger" role="alert"></div></div>';
     box.querySelector('.alert').textContent = error.message || 'Unable to load the charts.';
   }
@@ -155,9 +196,12 @@ const loadCharts = async () => {
 
 // Redraw the charts with the right colors when the theme changes.
 document.addEventListener('themechange', () => {
-  instances.splice(0).forEach((chart) => chart.destroy());
   colors = palette();
-  loadCharts();
+  loadCharts({ force: true });
 });
 
-document.addEventListener('DOMContentLoaded', loadCharts);
+document.addEventListener('DOMContentLoaded', () => {
+  loadCharts({ force: true });
+  setInterval(() => { if (!document.hidden) loadCharts(); }, REFRESH_MS);
+});
+document.addEventListener('visibilitychange', () => { if (!document.hidden) loadCharts(); });
