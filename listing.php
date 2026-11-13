@@ -76,38 +76,59 @@ require_once __DIR__ . '/includes/header.php';
     <div class="col-lg-6">
       <span class="badge text-bg-light mb-2"><?= e($typeLabels[$listing['type']] ?? $listing['type']) ?></span>
       <h1 class="h2"><?= e($listing['title']) ?></h1>
-      <p class="text-body-secondary mb-1"><i class="bi bi-geo-alt" aria-hidden="true"></i> <?= e($listing['address']) ?>, <?= e($listing['city']) ?></p>
-      <p class="mb-1"><strong>Slots:</strong> <?= $slots ?> of <?= (int) $listing['slots_total'] ?> free &middot; <?= e($genderLabels[$listing['gender_policy']] ?? '') ?></p>
-      <p class="mb-1"><strong>Status:</strong>
-        <span class="badge text-bg-<?= $slots > 0 ? 'success' : 'secondary' ?>"><?= $slots > 0 ? 'Available' : 'Full' ?></span></p>
-      <p class="mb-3"><a href="#detailMap"><i class="bi bi-map" aria-hidden="true"></i> View on map</a></p>
+      <p class="text-body-secondary mb-3 d-flex align-items-start gap-2">
+        <i class="bi bi-geo-alt-fill text-primary mt-1" aria-hidden="true"></i>
+        <span><?= e($listing['address']) ?>, <?= e($listing['city']) ?></span>
+      </p>
 
-      <p class="mb-1"><span class="display-6 fw-semibold">&#8369;<?= number_format((float) $listing['price_per_month'], 2) ?></span>
-        <span class="text-body-secondary">/ month</span></p>
+      <div class="detail-facts mb-3">
+        <span class="fact"><i class="bi bi-people" aria-hidden="true"></i> <?= $slots ?> of <?= (int) $listing['slots_total'] ?> slots free</span>
+        <span class="fact"><i class="bi bi-gender-ambiguous" aria-hidden="true"></i> <?= e($genderLabels[$listing['gender_policy']] ?? '') ?></span>
+        <span class="fact fact-<?= $slots > 0 ? 'ok' : 'full' ?>"><i class="bi <?= $slots > 0 ? 'bi-check-circle-fill' : 'bi-x-circle-fill' ?>" aria-hidden="true"></i> <?= $slots > 0 ? 'Available' : 'Full' ?></span>
+      </div>
 
-      <div class="mb-4">
-        <strong>Contact the owner:</strong>
+      <a class="btn btn-sm btn-outline-primary rounded-pill px-3 mb-4" href="#detailMap" id="viewOnMap">
+        <i class="bi bi-map me-1" aria-hidden="true"></i> View on map
+      </a>
+
+      <p class="detail-price mb-4">&#8369;<?= number_format((float) $listing['price_per_month'], 2) ?>
+        <span class="text-body-secondary fs-6 fw-normal">/ month</span></p>
+
+      <div class="owner-card mb-4">
+        <div class="owner-card-label">Contact the owner</div>
         <?php if ($user): ?>
-          <ul class="list-unstyled mb-0 mt-1">
-            <li class="d-flex align-items-center gap-2">
-              <?php if (!empty($listing['owner_avatar'])): ?>
-                <img src="<?= e(url($listing['owner_avatar'])) ?>" alt="" class="rounded-circle" width="28" height="28" style="object-fit: cover;">
-              <?php else: ?>
-                <i class="bi bi-person" aria-hidden="true"></i>
-              <?php endif; ?>
-              <a href="<?= url('owner-profile.php?id=' . (int) $listing['owner_id']) ?>" title="View the owner's profile"><?= e($listing['owner_name']) ?></a>
-              <i class="bi bi-chevron-right small text-body-secondary" aria-hidden="true"></i>
-            </li>
-            <li><i class="bi bi-telephone" aria-hidden="true"></i>
-              <?php if ($listing['owner_phone']): ?>
-                <a href="tel:<?= e(preg_replace('/[^0-9+]/', '', $listing['owner_phone'])) ?>"><?= e($listing['owner_phone']) ?></a>
-              <?php else: ?><span class="text-body-secondary">not provided</span><?php endif; ?>
-            </li>
-            <li><i class="bi bi-envelope" aria-hidden="true"></i>
-              <a href="mailto:<?= e($listing['owner_email']) ?>"><?= e($listing['owner_email']) ?></a></li>
-          </ul>
+          <a class="owner-head" href="<?= url('owner-profile.php?id=' . (int) $listing['owner_id']) ?>" title="View the owner's profile">
+            <?php if (!empty($listing['owner_avatar'])): ?>
+              <img src="<?= e(url($listing['owner_avatar'])) ?>" alt="" class="owner-avatar">
+            <?php else: ?>
+              <span class="owner-avatar owner-initial" aria-hidden="true"><?= e(mb_strtoupper(mb_substr((string) $listing['owner_name'], 0, 1))) ?></span>
+            <?php endif; ?>
+            <span class="flex-grow-1">
+              <span class="d-block fw-semibold"><?= e($listing['owner_name']) ?></span>
+              <span class="d-block small text-body-secondary">Property owner &middot; View profile</span>
+            </span>
+            <i class="bi bi-chevron-right text-body-secondary" aria-hidden="true"></i>
+          </a>
+          <div class="owner-contacts">
+            <?php if ($listing['owner_phone']): ?>
+              <a class="owner-contact" href="tel:<?= e(preg_replace('/[^0-9+]/', '', $listing['owner_phone'])) ?>">
+                <span class="contact-icon"><i class="bi bi-telephone" aria-hidden="true"></i></span>
+                <span><span class="d-block small text-body-secondary">Phone</span><?= e($listing['owner_phone']) ?></span>
+              </a>
+            <?php else: ?>
+              <div class="owner-contact">
+                <span class="contact-icon"><i class="bi bi-telephone" aria-hidden="true"></i></span>
+                <span><span class="d-block small text-body-secondary">Phone</span><span class="text-body-secondary">Not provided</span></span>
+              </div>
+            <?php endif; ?>
+            <a class="owner-contact" href="mailto:<?= e($listing['owner_email']) ?>">
+              <span class="contact-icon"><i class="bi bi-envelope" aria-hidden="true"></i></span>
+              <span class="text-truncate"><span class="d-block small text-body-secondary">Email</span><?= e($listing['owner_email']) ?></span>
+            </a>
+          </div>
         <?php else: ?>
-          <a href="<?= url('login.php') ?>">Log in</a> to see the owner's phone number and email.
+          <p class="mb-0 text-body-secondary"><i class="bi bi-lock me-1" aria-hidden="true"></i>
+            <a href="<?= url('login.php') ?>">Log in</a> to see the owner's name, phone number, and email.</p>
         <?php endif; ?>
       </div>
 
@@ -118,7 +139,9 @@ require_once __DIR__ . '/includes/header.php';
           </div>
           <button type="button" class="btn btn-secondary w-100 mb-2" disabled>No Availability</button>
         <?php else: ?>
-          <button type="button" class="btn btn-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#inquiryModal">Inquire</button>
+          <button type="button" class="btn btn-primary btn-lg w-100 mb-2" data-bs-toggle="modal" data-bs-target="#inquiryModal">
+            <i class="bi bi-chat-dots me-1" aria-hidden="true"></i> Inquire
+          </button>
         <?php endif; ?>
 
         <button type="button" class="btn btn-outline-secondary w-100" id="favoriteBtn" aria-pressed="<?= $isFavorite ? 'true' : 'false' ?>">
@@ -198,34 +221,57 @@ require_once __DIR__ . '/includes/header.php';
 </div>
 
 <?php if ($isStudent && !$isFull): ?>
-<div class="modal fade" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryTitle" aria-hidden="true">
+<div class="modal fade inquiry-modal" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <form id="inquiryForm" novalidate>
         <div class="modal-header">
-          <h5 class="modal-title" id="inquiryTitle">Message to the owner</h5>
+          <div>
+            <h2 class="modal-title h5 mb-0" id="inquiryTitle">Send an inquiry</h2>
+            <p class="small text-body-secondary mb-0">The owner will be notified and can accept or decline.</p>
+          </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        
+
         <div class="modal-body">
-          <div class="alert alert-danger d-none" id="inquiryError" role="alert"></div>
-          
-          <div class="mb-3">
-            <label for="inquiryMessage" class="form-label">Message to the owner</label>
-            <textarea class="form-control" id="inquiryMessage" name="message" rows="4" maxlength="1000" required
-                      placeholder="Hi! Is this still available? I would like to ask about..."></textarea>
-            <div class="form-text text-end"><span id="inquiryCount">0</span> / 1000 characters (at least 10)</div>
+          <div class="inquiry-summary mb-3">
+            <?php if ($photos): ?>
+              <img src="<?= e(url($photos[0]['file_path'])) ?>" alt="" class="inquiry-thumb">
+            <?php else: ?>
+              <span class="inquiry-thumb d-grid place-center"><i class="bi bi-house" aria-hidden="true"></i></span>
+            <?php endif; ?>
+            <div class="min-w-0">
+              <div class="fw-semibold text-truncate"><?= e($listing['title']) ?></div>
+              <div class="small text-body-secondary text-truncate"><?= e($listing['city']) ?> &middot; &#8369;<?= number_format((float) $listing['price_per_month'], 2) ?> / month</div>
+              <div class="small text-body-secondary">To: <?= e($listing['owner_name']) ?></div>
+            </div>
           </div>
-          
-          <div class="mb-3">
-            <label for="moveIn" class="form-label">Preferred move-in date <span class="text-body-secondary">(optional)</span></label>
-            <input type="date" class="form-control" id="moveIn" name="move_in_date">
+
+          <div class="alert alert-danger d-none py-2" id="inquiryError" role="alert"></div>
+
+          <label for="inquiryMessage" class="form-label fw-semibold">Your message</label>
+          <div class="quick-replies mb-2" aria-label="Quick messages">
+            <button type="button" class="chip quick-reply">Is this still available?</button>
+            <button type="button" class="chip quick-reply">Can I schedule a visit?</button>
+            <button type="button" class="chip quick-reply">Are water and electricity included?</button>
           </div>
+          <textarea class="form-control" id="inquiryMessage" name="message" rows="4" maxlength="1000" required
+                    aria-describedby="inquiryHelp"
+                    placeholder="Hi! I'm a student and I'm interested in this place..."></textarea>
+          <div class="d-flex justify-content-between form-text mb-3" id="inquiryHelp">
+            <span>At least 10 characters</span>
+            <span><span id="inquiryCount">0</span> / 1000</span>
+          </div>
+
+          <label for="moveIn" class="form-label fw-semibold">Preferred move-in date <span class="text-body-secondary fw-normal">(optional)</span></label>
+          <input type="date" class="form-control" id="moveIn" name="move_in_date">
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary" id="inquirySubmit">Send inquiry</button>
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary rounded-pill px-4" id="inquirySubmit">
+            <i class="bi bi-send me-1" aria-hidden="true"></i> <span id="inquirySubmitText">Send inquiry</span>
+          </button>
         </div>
       </form>
     </div>

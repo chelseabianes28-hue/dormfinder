@@ -79,7 +79,22 @@ const setupInquiry = () => {
   const moveIn = form.querySelector('#moveIn');
 
   moveIn.min = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-  message.addEventListener('input', () => { counter.textContent = message.value.length; });
+  const submitText = form.querySelector('#inquirySubmitText');
+  const updateCount = () => {
+    counter.textContent = message.value.length;
+    counter.parentElement.classList.toggle('text-success', message.value.trim().length >= 10);
+  };
+  message.addEventListener('input', updateCount);
+
+  // Quick messages: tap a suggestion to add it to the message.
+  form.querySelectorAll('.quick-reply').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const text = chip.textContent.trim();
+      message.value = message.value.trim() ? `${message.value.trim()} ${text}` : `Hi! ${text}`;
+      updateCount();
+      message.focus();
+    });
+  });
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -92,10 +107,10 @@ const setupInquiry = () => {
     }
 
     submit.disabled = true;
-    submit.textContent = 'Sending...';
+    submitText.textContent = 'Sending...';
     const result = await post('api/inquiry_create.php', { message: message.value, move_in_date: moveIn.value });
     submit.disabled = false;
-    submit.textContent = 'Send inquiry';
+    submitText.textContent = 'Send inquiry';
 
     if (!result.ok) {
       errorBox.textContent = result.error;
@@ -104,7 +119,7 @@ const setupInquiry = () => {
     }
     bootstrap.Modal.getInstance(document.querySelector('#inquiryModal')).hide();
     form.reset();
-    counter.textContent = '0';
+    updateCount();
     showAlert('success', result.message);
   });
 };
