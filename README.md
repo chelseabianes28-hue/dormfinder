@@ -101,6 +101,7 @@ Already have an older database? Run `database/add_avatar_column.sql` and `databa
 <img width="1365" height="719" alt="image" src="https://github.com/user-attachments/assets/98ac8e20-48e0-456f-847f-a129a1c1c434" />
 <img width="1363" height="718" alt="image" src="https://github.com/user-attachments/assets/854e72c0-251c-4817-8b1f-8aedd332a4ea" />
 <img width="1364" height="720" alt="image" src="https://github.com/user-attachments/assets/f53f7d20-501b-4ad2-99e1-c1b2580ef945" />
+<img width="1365" height="719" alt="image" src="https://github.com/user-attachments/assets/dafd634f-a25b-4392-9dd2-616a0f89e6db" />
 <img width="1365" height="718" alt="image" src="https://github.com/user-attachments/assets/e4703c6a-86bc-40af-8de5-35f5001143f0" />
 <img width="1354" height="717" alt="image" src="https://github.com/user-attachments/assets/720970a2-0335-4916-91fa-a5a22797e1a6" />
 <img width="1365" height="716" alt="image" src="https://github.com/user-attachments/assets/5cf98e6c-b263-416f-8b68-5659628c3722" />
